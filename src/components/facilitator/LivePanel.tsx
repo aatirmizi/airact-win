@@ -26,8 +26,13 @@ import {
   Shield,
   HelpCircle,
   FileText,
+  Sliders,
+  ExternalLink,
+  Wifi,
+  ChevronDown,
 } from 'lucide-react';
 import { LiveSlideDisplay } from './LiveSlideDisplay.js';
+import { AspectRatioType } from '../common/AspectScaledCanvas.js';
 
 interface LivePanelProps {
   onEndPresenting: () => void;
@@ -57,8 +62,12 @@ export const LivePanel: React.FC<LivePanelProps> = ({ onEndPresenting, onResetSl
     hideParticipantName,
     updateQAStatus,
     aspectRatio,
+    setAspectRatio,
     updateSlideNotes,
     saveActivity,
+    setIsNetworkModalOpen,
+    setActiveView,
+    networkStatus,
   } = usePresenter();
 
   const [copiedLink, setCopiedLink] = useState(false);
@@ -66,6 +75,7 @@ export const LivePanel: React.FC<LivePanelProps> = ({ onEndPresenting, onResetSl
   const [initialTimerSeconds, setInitialTimerSeconds] = useState<number>(30);
   const [notesDraft, setNotesDraft] = useState<string>('');
   const [notesSavedNotice, setNotesSavedNotice] = useState<string>('Saved');
+  const [aspectMenuOpen, setAspectMenuOpen] = useState(false);
   const notesSaveTimeoutRef = useRef<any>(null);
 
   const slides = activity?.slides || [];
@@ -116,6 +126,10 @@ export const LivePanel: React.FC<LivePanelProps> = ({ onEndPresenting, onResetSl
 
   const handleOpenProjector = () => {
     window.open('/projector', '_blank');
+  };
+
+  const handleOpenPhoneWindow = () => {
+    window.open('/p', 'AirActPhone', 'width=420,height=800,menubar=no,toolbar=no,location=no,status=no');
   };
 
   if (!liveState || !liveState.is_live || !currentSlide) return null;
@@ -170,43 +184,119 @@ export const LivePanel: React.FC<LivePanelProps> = ({ onEndPresenting, onResetSl
     return 'Next Slide';
   };
 
+  // Word count of speaker notes
+  const notesWordCount = notesDraft.trim() ? notesDraft.trim().split(/\s+/).length : 0;
+
   return (
-    <div className="flex-1 flex flex-col h-full bg-slate-950 text-slate-100 overflow-hidden select-none font-sans">
+    <div className="w-[100vw] h-[100vh] flex flex-col bg-slate-950 text-slate-100 overflow-hidden select-none font-sans">
       {/* ─────────────────────────────────────────────────────────────────
-          1. TOP STATUS LINE: Important Information for Current Activity & Slide State
+          GLOBAL LAYOUT BOUNDARY 1:
+          NavBar / Top Banner: Width 100vw, Height 15vh (Offset from top: 0)
           ───────────────────────────────────────────────────────────────── */}
-      <div className="h-14 px-5 bg-slate-900/95 border-b border-slate-800 flex items-center justify-between shrink-0 shadow-lg z-20 gap-4">
-        {/* Left: Active Activity & Slide State */}
-        <div className="flex items-center space-x-3 min-w-0">
-          <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-red-600 text-white text-xs font-bold tracking-wider animate-pulse shrink-0">
-            <Radio className="w-3.5 h-3.5" />
-            <span>LIVE</span>
+      <div className="w-[100vw] h-[15vh] max-h-[15vh] shrink-0 bg-slate-900/95 border-b border-slate-800 flex flex-col justify-between px-6 py-2.5 z-30 shadow-lg">
+        {/* Row 1: Brand Logo, Presentation Title, Quick Menus, Network Indicator & End Session */}
+        <div className="flex items-center justify-between gap-4">
+          {/* Left: Brand & Title */}
+          <div className="flex items-center space-x-3 min-w-0">
+            <div className="flex items-center space-x-2">
+              <img
+                src="/assets/aistudio/AirAct_Community_Learning_Logo_44a129c1.png"
+                alt="AirAct"
+                className="h-7 w-auto object-contain"
+              />
+              <span className="font-black text-sm text-white tracking-tight hidden sm:inline">
+                AirAct
+              </span>
+            </div>
+
+            <div className="flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-red-600 text-white text-[11px] font-extrabold tracking-wider animate-pulse shrink-0">
+              <Radio className="w-3.5 h-3.5" />
+              <span>LIVE</span>
+            </div>
+
+            <span className="text-slate-600">|</span>
+
+            <span
+              className="font-extrabold text-sm text-slate-200 truncate max-w-[260px]"
+              title={activity?.manifest.meta.name || liveState.activity_name}
+            >
+              {activity?.manifest.meta.name || liveState.activity_name || 'Active Presentation'}
+            </span>
           </div>
 
-          <div className="flex items-center space-x-2 text-xs truncate">
-            <span className="font-extrabold text-slate-200 truncate max-w-[200px]" title={activity?.manifest.meta.name || liveState.activity_name}>
-              {activity?.manifest.meta.name || liveState.activity_name || 'Active Activity'}
-            </span>
-            <span className="text-slate-600">|</span>
-            <span className="text-indigo-400 font-bold shrink-0">
-              Slide {currentSlideIndex + 1} of {slides.length}
-            </span>
-            <span className="capitalize text-slate-400 shrink-0 font-medium">({currentSlide.type_id})</span>
-            <span className="text-slate-600">|</span>
-            <span className="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[11px] font-semibold uppercase shrink-0">
-              Step: {liveState.current_step}
-            </span>
+          {/* Center: Facilitator Dropdown Shortcuts */}
+          <div className="hidden md:flex items-center space-x-2 text-xs">
+            <button
+              onClick={() => setIsNetworkModalOpen(true)}
+              className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors cursor-pointer"
+              title="Open Network Settings Helper"
+            >
+              <Wifi className="w-3.5 h-3.5 text-purple-400" />
+              <span className="text-[11px] font-semibold">Network Helper</span>
+            </button>
+
+            <button
+              onClick={handleOpenPhoneWindow}
+              className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors cursor-pointer"
+              title="Launch Participant Phone Test Window"
+            >
+              <Users className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="text-[11px] font-semibold">Phone Window</span>
+            </button>
+
+            <button
+              onClick={() => setActiveView('host_security')}
+              className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors cursor-pointer"
+              title="Host PIN & Security"
+            >
+              <Shield className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="text-[11px] font-semibold">Host Security</span>
+            </button>
+          </div>
+
+          {/* Right: Dual Screen Actions & End Live Session */}
+          <div className="flex items-center space-x-3 shrink-0">
+            <button
+              onClick={handleOpenProjector}
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all shadow-md shadow-indigo-600/20 cursor-pointer"
+              title="Open dedicated projector window (/projector)"
+            >
+              <Tv className="w-3.5 h-3.5" />
+              <span>Open Projector</span>
+            </button>
+
+            <button
+              onClick={onEndPresenting}
+              className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold shadow-md shadow-red-600/30 transition-all cursor-pointer"
+            >
+              <Square className="w-3.5 h-3.5 fill-current" />
+              <span>End Session</span>
+            </button>
           </div>
         </div>
 
-        {/* Center: Live Join Link & Participant Counters */}
-        <div className="hidden lg:flex items-center space-x-4 shrink-0 text-xs">
-          {/* Join Info */}
-          <div className="flex items-center space-x-2 bg-slate-800/90 border border-slate-700/80 px-3 py-1 rounded-xl">
+        {/* Row 2: Live Status Line (Slide Index, Join Info, Audience Counters, Blank/Freeze status) */}
+        <div className="flex items-center justify-between border-t border-slate-800/80 pt-1.5 text-xs">
+          {/* Left: Slide and Step Status */}
+          <div className="flex items-center space-x-2 text-xs truncate">
+            <span className="text-indigo-400 font-bold shrink-0">
+              Slide {currentSlideIndex + 1} of {slides.length}
+            </span>
+            <span className="capitalize text-slate-300 shrink-0 font-semibold px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-[11px]">
+              {currentSlide.type_id}
+            </span>
+            <span className="text-slate-600">·</span>
+            <span className="px-2 py-0.5 rounded-full bg-slate-800/90 text-slate-300 border border-slate-700 text-[10px] font-mono font-bold uppercase shrink-0">
+              Step: {liveState.current_step}
+            </span>
+          </div>
+
+          {/* Center: Live Join Info with Copy Button */}
+          <div className="flex items-center space-x-2 bg-slate-800/90 border border-slate-700/80 px-3 py-0.5 rounded-xl text-xs">
             <span className="text-slate-400">Join:</span>
             <span className="font-mono font-bold text-indigo-400">{joinUrl}</span>
             <span className="text-slate-500">·</span>
-            <span className="font-mono font-extrabold text-white">Code: {liveState.join_code}</span>
+            <span className="font-mono font-black text-white">Code: {liveState.join_code}</span>
             <button
               onClick={handleCopyLink}
               className="p-1 hover:text-indigo-400 text-slate-400 transition-colors cursor-pointer"
@@ -216,86 +306,99 @@ export const LivePanel: React.FC<LivePanelProps> = ({ onEndPresenting, onResetSl
             </button>
           </div>
 
-          {/* Audience Counters */}
-          <div className="flex items-center space-x-3 bg-slate-800/90 border border-slate-700/80 px-3 py-1 rounded-xl font-mono text-[11px]">
-            <span className="flex items-center space-x-1 text-slate-300">
-              <Users className="w-3.5 h-3.5 text-indigo-400" />
-              <span>{liveState.active_participants} Active</span>
-            </span>
-            <span className="text-slate-600">|</span>
-            <span className="text-emerald-400 font-bold">{liveState.answered_count} Answered</span>
-            <span className="text-slate-600">|</span>
-            <span className="text-slate-400">{liveState.stored_count} Stored</span>
+          {/* Right: Live Audience Counters & Output Indicators */}
+          <div className="flex items-center space-x-3 text-xs font-mono">
+            <div className="flex items-center space-x-2 bg-slate-800/90 border border-slate-700/80 px-2.5 py-0.5 rounded-xl text-[11px]">
+              <span className="text-slate-300 flex items-center space-x-1">
+                <Users className="w-3 h-3 text-indigo-400" />
+                <span>{liveState.active_participants} Active</span>
+              </span>
+              <span className="text-slate-600">|</span>
+              <span className="text-emerald-400 font-bold">{liveState.answered_count} Votes</span>
+            </div>
+
+            {liveState.is_blanked ? (
+              <span className="px-2 py-0.5 rounded-lg text-[11px] font-bold bg-red-950/80 text-red-400 border border-red-800 flex items-center space-x-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                <span>Blanked</span>
+              </span>
+            ) : liveState.is_frozen ? (
+              <span className="px-2 py-0.5 rounded-lg text-[11px] font-bold bg-amber-950/80 text-amber-400 border border-amber-800 flex items-center space-x-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                <span>Frozen</span>
+              </span>
+            ) : (
+              <span className="px-2 py-0.5 rounded-lg text-[11px] font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 flex items-center space-x-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span>Projector Normal</span>
+              </span>
+            )}
           </div>
-        </div>
-
-        {/* Right: Screen Status, Open Projector & End Session */}
-        <div className="flex items-center space-x-2.5 shrink-0">
-          {/* Screen Status Badge */}
-          {liveState.is_blanked ? (
-            <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-red-950/80 text-red-400 border border-red-800 flex items-center space-x-1">
-              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              <span>Projector Blanked</span>
-            </span>
-          ) : liveState.is_frozen ? (
-            <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-950/80 text-amber-400 border border-amber-800 flex items-center space-x-1">
-              <span className="w-2 h-2 rounded-full bg-amber-500" />
-              <span>Projector Frozen</span>
-            </span>
-          ) : (
-            <span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 flex items-center space-x-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span className="hidden sm:inline">Projecting Live</span>
-            </span>
-          )}
-
-          <button
-            onClick={handleOpenProjector}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition-colors shadow-xs cursor-pointer"
-            title="Open dedicated projector window"
-          >
-            <Tv className="w-3.5 h-3.5 text-indigo-400" />
-            <span className="hidden sm:inline">Open Projector</span>
-          </button>
-
-          <button
-            onClick={onEndPresenting}
-            className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-md transition-colors cursor-pointer"
-          >
-            <Square className="w-3.5 h-3.5 fill-current" />
-            <span>End Session</span>
-          </button>
         </div>
       </div>
 
       {/* ─────────────────────────────────────────────────────────────────
-          2. MAIN TWO-PANE VIEW: 60% / 40% SPLIT
+          GLOBAL LAYOUT BOUNDARY 2:
+          Main Workspace: Width 100vw, Height 85vh (Offset from top: 15vh)
           ───────────────────────────────────────────────────────────────── */}
-      <div className="flex-1 flex flex-col lg:flex-row p-3 gap-3 overflow-hidden bg-slate-950">
+      <div className="w-[100vw] h-[85vh] max-h-[85vh] flex flex-row overflow-hidden shrink-0">
         {/* ═════════════════════════════════════════════════════════════════
-            LEFT PANE (60%): Left-Top (Current Slide Replica) & Left-Bottom (Controls & Data)
+            LEFT PANE (Main Workspace): Width 60vw, Height 85vh
             ═════════════════════════════════════════════════════════════════ */}
-        <div className="w-full lg:w-[60%] flex flex-col gap-3 h-full overflow-hidden min-w-0">
-          {/* FRAME 1: Left-Top (Live Replica of Current Slide in Correct Aspect Ratio) */}
-          <div className="h-[48%] min-h-[250px] bg-slate-900/90 rounded-2xl border border-slate-800 p-2.5 flex flex-col justify-between overflow-hidden shadow-xl relative">
-            {/* Frame Sub-Header */}
-            <div className="flex items-center justify-between pb-1 px-1 border-b border-slate-800/80 shrink-0">
-              <div className="flex items-center space-x-2 text-xs font-bold text-indigo-400 uppercase tracking-wider">
+        <div className="w-[60vw] h-[85vh] max-h-[85vh] flex flex-col overflow-hidden border-r border-slate-800 shrink-0">
+          {/* ─────────────────────────────────────────────────────────────
+              SUB-PANE 1: Main Slide Frame (Top Left): Width 60vw, Height 60vh
+              Aspect-Locked Visual Replica of /projector
+              ───────────────────────────────────────────────────────────── */}
+          <div className="w-[60vw] h-[60vh] max-h-[60vh] flex flex-col shrink-0 overflow-hidden bg-slate-950 p-2.5 relative">
+            {/* Sub-Header Strip */}
+            <div className="h-7 flex items-center justify-between px-2 pb-1.5 border-b border-slate-800/80 shrink-0 text-xs">
+              <div className="flex items-center space-x-2 text-indigo-400 font-bold uppercase tracking-wider text-[11px]">
                 <Tv className="w-3.5 h-3.5" />
                 <span>Current Slide · Live Projector Replica</span>
               </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 uppercase">
-                  {aspectRatio}
-                </span>
+
+              {/* Aspect Ratio Switcher Dropdown & Indicator */}
+              <div className="flex items-center space-x-2.5">
                 <span className="text-[10px] text-slate-400 font-mono">
                   Slide {currentSlideIndex + 1}/{slides.length}
                 </span>
+
+                <div className="relative">
+                  <button
+                    onClick={() => setAspectMenuOpen(!aspectMenuOpen)}
+                    className="flex items-center space-x-1 px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[10px] font-mono font-bold uppercase transition-colors cursor-pointer"
+                    title="Change presentation aspect ratio"
+                  >
+                    <span>Aspect: {aspectRatio}</span>
+                    <ChevronDown className="w-3 h-3 text-slate-400" />
+                  </button>
+
+                  {aspectMenuOpen && (
+                    <div className="absolute right-0 mt-1 w-28 bg-slate-900 border border-slate-700 rounded-lg shadow-xl py-1 z-50">
+                      {(['16:9', '16:10', '4:3'] as AspectRatioType[]).map((r) => (
+                        <button
+                          key={r}
+                          onClick={() => {
+                            setAspectRatio(r);
+                            setAspectMenuOpen(false);
+                          }}
+                          className={`w-full text-left px-3 py-1 text-xs font-mono font-bold flex items-center justify-between hover:bg-slate-800 cursor-pointer ${
+                            aspectRatio === r ? 'text-indigo-400 bg-slate-800/60' : 'text-slate-300'
+                          }`}
+                        >
+                          <span>{r}</span>
+                          {aspectRatio === r && <Check className="w-3 h-3 text-indigo-400" />}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* Live Visual Replica of Current Slide */}
-            <div className="flex-1 flex items-center justify-center overflow-hidden my-auto">
+            {/* Live Visual Replica scaled inside AspectScaledCanvas */}
+            <div className="flex-1 w-full h-[calc(60vh-28px)] overflow-hidden flex items-center justify-center relative">
               <LiveSlideDisplay
                 slide={currentSlide}
                 theme={activity?.theme}
@@ -313,25 +416,28 @@ export const LivePanel: React.FC<LivePanelProps> = ({ onEndPresenting, onResetSl
             </div>
           </div>
 
-          {/* FRAME 2: Left-Bottom (Presenter Controls & Detailed Slide Data) */}
-          <div className="h-[52%] min-h-[270px] bg-slate-900/95 rounded-2xl border border-slate-800 p-4 flex flex-col justify-between overflow-y-auto shadow-xl space-y-3.5">
-            {/* A. Primary Navigation Bar: Prev Slide, Next Step, Next Slide */}
+          {/* ─────────────────────────────────────────────────────────────
+              SUB-PANE 2: Presentation Controls (Bottom Left): Width 60vw, Height 25vh
+              Navigation, Step Advances, Results & Countdown Clocks
+              ───────────────────────────────────────────────────────────── */}
+          <div className="w-[60vw] h-[25vh] max-h-[25vh] flex flex-col shrink-0 overflow-y-auto bg-slate-900/90 border-t border-slate-800 p-3 space-y-2.5">
+            {/* Row 1: Primary Navigation Buttons */}
             <div className="grid grid-cols-3 gap-2.5 shrink-0">
               <button
                 onClick={prevSlide}
                 disabled={currentSlideIndex === 0}
-                className="flex items-center justify-center space-x-1.5 py-2 px-3 rounded-xl border border-slate-700 bg-slate-800/90 text-slate-200 text-xs font-semibold hover:bg-slate-700 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+                className="flex items-center justify-center space-x-1.5 py-1.5 px-3 rounded-xl border border-slate-700 bg-slate-800/90 text-slate-200 text-xs font-semibold hover:bg-slate-700 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
                 title="Previous Slide (PageUp)"
               >
                 <ChevronLeft className="w-4 h-4" />
                 <span>Prev Slide</span>
               </button>
 
-              {/* Next Step / Reveal action */}
+              {/* Dynamic Next Step / Reveal Action */}
               {hasNextStep ? (
                 <button
                   onClick={nextStep}
-                  className="flex items-center justify-center space-x-1.5 py-2 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-extrabold shadow-md transition-all cursor-pointer"
+                  className="flex items-center justify-center space-x-1.5 py-1.5 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-extrabold shadow-md transition-all cursor-pointer"
                   title="Advance slide step or reveal answer (Space / Right Arrow)"
                 >
                   <span>{getNextStepLabel()}</span>
@@ -340,7 +446,7 @@ export const LivePanel: React.FC<LivePanelProps> = ({ onEndPresenting, onResetSl
               ) : (
                 <button
                   disabled={true}
-                  className="flex items-center justify-center space-x-1 py-2 px-3 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-500 text-xs font-medium opacity-40 cursor-not-allowed select-none"
+                  className="flex items-center justify-center space-x-1 py-1.5 px-3 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-500 text-xs font-medium opacity-40 cursor-not-allowed select-none"
                 >
                   <span>No Next Step</span>
                 </button>
@@ -349,7 +455,7 @@ export const LivePanel: React.FC<LivePanelProps> = ({ onEndPresenting, onResetSl
               <button
                 onClick={handleNextSlide}
                 disabled={isLastSlide}
-                className={`flex items-center justify-center space-x-1.5 py-2 px-3 rounded-xl text-xs font-bold transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer ${
+                className={`flex items-center justify-center space-x-1.5 py-1.5 px-3 rounded-xl text-xs font-bold transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer ${
                   !hasNextStep
                     ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md'
                     : 'border border-slate-700 bg-slate-800/90 text-slate-200 font-semibold hover:bg-slate-700'
@@ -361,417 +467,212 @@ export const LivePanel: React.FC<LivePanelProps> = ({ onEndPresenting, onResetSl
               </button>
             </div>
 
-            {/* B. Live Response, Display & Screen Controls Strip */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+            {/* Row 2: Secondary Controls (Responses, Projector Bars, Blank, Freeze, Timer) */}
+            <div className="grid grid-cols-4 gap-2 text-xs shrink-0">
               {/* Accepting Responses */}
-              <div className="p-2.5 rounded-xl border border-slate-800 bg-slate-800/40 flex items-center justify-between">
+              <div className="p-2 rounded-xl border border-slate-800 bg-slate-800/40 flex items-center justify-between">
                 <div>
-                  <div className="text-[11px] font-bold text-slate-300">Responses</div>
-                  <div className="text-[10px] text-slate-400">
-                    {liveState.accepting_responses ? 'Accepting votes' : 'Closed'}
+                  <div className="text-[10px] font-bold text-slate-300">Responses</div>
+                  <div className="text-[9px] text-slate-400">
+                    {liveState.accepting_responses ? 'Accepting' : 'Closed'}
                   </div>
                 </div>
                 {liveState.accepting_responses ? (
                   <button
                     onClick={closeNow}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-600/90 hover:bg-amber-600 text-white transition-colors cursor-pointer"
-                    title="Close responses now"
+                    className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-600 hover:bg-amber-500 text-white transition-colors cursor-pointer"
                   >
-                    Close now
+                    Close
                   </button>
                 ) : (
                   <button
                     onClick={() => toggleAccepting(true)}
-                    disabled={currentSlide.type_id === 'quiz' && liveState.current_step !== 'question'}
-                    className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-600/90 hover:bg-emerald-600 text-white transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                    title="Open responses again"
+                    className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors cursor-pointer"
                   >
-                    Open again
+                    Open
                   </button>
                 )}
               </div>
 
-              {/* Results on Projector */}
-              <div className="p-2.5 rounded-xl border border-slate-800 bg-slate-800/40 flex items-center justify-between">
+              {/* Projector Bars */}
+              <div className="p-2 rounded-xl border border-slate-800 bg-slate-800/40 flex items-center justify-between">
                 <div>
-                  <div className="text-[11px] font-bold text-slate-300">Projector Bars</div>
-                  <div className="text-[10px] text-slate-400">
-                    {liveState.results_visible_on_projector ? 'Showing results' : 'Hidden'}
+                  <div className="text-[10px] font-bold text-slate-300">Projector Bars</div>
+                  <div className="text-[9px] text-slate-400">
+                    {liveState.results_visible_on_projector ? 'Visible' : 'Hidden'}
                   </div>
                 </div>
                 <button
                   onClick={() => toggleResultsVisibility(!liveState.results_visible_on_projector)}
-                  className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-colors cursor-pointer ${
+                  className={`p-1 rounded text-[10px] font-bold transition-colors cursor-pointer ${
                     liveState.results_visible_on_projector
                       ? 'bg-indigo-600 text-white'
-                      : 'bg-slate-800 text-slate-400 hover:text-white border border-slate-700'
+                      : 'bg-slate-700 text-slate-300 hover:text-white'
                   }`}
                   title="Toggle live results visibility on projector screen"
                 >
                   {liveState.results_visible_on_projector ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
-                  <span>{liveState.results_visible_on_projector ? 'Live' : 'Hidden'}</span>
                 </button>
               </div>
 
-              {/* Blank & Freeze Buttons */}
-              <div className="p-2.5 rounded-xl border border-slate-800 bg-slate-800/40 flex items-center justify-between">
+              {/* Blank & Freeze */}
+              <div className="p-2 rounded-xl border border-slate-800 bg-slate-800/40 flex items-center justify-between">
                 <div>
-                  <div className="text-[11px] font-bold text-slate-300">Screen Output</div>
-                  <div className="text-[10px] text-slate-400">
-                    {liveState.is_blanked ? 'Blanked (B)' : liveState.is_frozen ? 'Frozen (F)' : 'Normal'}
+                  <div className="text-[10px] font-bold text-slate-300">Display</div>
+                  <div className="text-[9px] text-slate-400">
+                    {liveState.is_blanked ? 'Blanked' : liveState.is_frozen ? 'Frozen' : 'Normal'}
                   </div>
                 </div>
                 <div className="flex items-center space-x-1">
                   <button
                     onClick={() => setBlanked(!liveState.is_blanked)}
-                    className={`px-2 py-1 rounded-md text-[10px] font-bold border transition-colors cursor-pointer ${
+                    className={`px-1.5 py-0.5 rounded text-[9px] font-bold border transition-colors cursor-pointer ${
                       liveState.is_blanked
                         ? 'bg-red-600 text-white border-red-500'
-                        : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
+                        : 'bg-slate-700 text-slate-300 border-slate-600 hover:bg-slate-600'
                     }`}
-                    title="Blank Screen (B)"
                   >
                     Blank
                   </button>
                   <button
                     onClick={() => setFrozen(!liveState.is_frozen)}
-                    className={`px-2 py-1 rounded-md text-[10px] font-bold border transition-colors cursor-pointer ${
+                    className={`px-1.5 py-0.5 rounded text-[9px] font-bold border transition-colors cursor-pointer ${
                       liveState.is_frozen
                         ? 'bg-amber-600 text-white border-amber-500'
-                        : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
+                        : 'bg-slate-700 text-slate-300 border-slate-600 hover:bg-slate-600'
                     }`}
-                    title="Freeze Screen (F)"
                   >
                     Freeze
                   </button>
                 </div>
               </div>
+
+              {/* Countdown Timer */}
+              <div className="p-2 rounded-xl border border-slate-800 bg-slate-800/40 flex items-center justify-between">
+                <div>
+                  <div className="text-[10px] font-bold text-slate-300 flex items-center space-x-1">
+                    <Clock className="w-3 h-3 text-indigo-400" />
+                    <span>Timer</span>
+                  </div>
+                  <div className="font-mono text-[10px] text-slate-400">
+                    {liveState.timer_active
+                      ? `${liveState.remaining_seconds}s`
+                      : 'Inactive'}
+                  </div>
+                </div>
+                <div className="flex items-center space-x-1">
+                  {liveState.timer_active ? (
+                    <button
+                      onClick={liveState.timer_paused ? resumeTimer : pauseTimer}
+                      className="px-1.5 py-0.5 rounded bg-slate-700 hover:bg-slate-600 text-white text-[9px] font-bold"
+                    >
+                      {liveState.timer_paused ? 'Resume' : 'Pause'}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setTimer(initialTimerSeconds, true)}
+                      className="px-1.5 py-0.5 rounded bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] font-bold"
+                    >
+                      Start
+                    </button>
+                  )}
+                  <button
+                    onClick={() => extendTimer(30)}
+                    className="px-1.5 py-0.5 rounded bg-slate-700 hover:bg-slate-600 text-white text-[9px] font-bold"
+                    title="+30s"
+                  >
+                    +30s
+                  </button>
+                </div>
+              </div>
             </div>
 
-            {/* C. Countdown Timer Controls */}
-            <div className={`p-3 rounded-xl border border-slate-800 bg-slate-800/30 space-y-2 ${!isTimerApplicable ? 'opacity-40 select-none' : ''}`}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Clock className="w-3.5 h-3.5 text-indigo-400" />
-                  <span className="text-xs font-bold text-slate-200">Countdown Timer</span>
-                  {!isTimerApplicable && (
-                    <span className="text-[10px] text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-800">
-                      Disabled on this slide
-                    </span>
-                  )}
-                  {isTimerApplicable && liveState.remaining_seconds !== null && (
-                    <span className={`text-xs font-mono font-extrabold ${liveState.timer_paused ? 'text-amber-400' : 'text-emerald-400'}`}>
-                      {liveState.remaining_seconds}s {liveState.timer_paused ? '(PAUSED)' : '(ACTIVE)'}
-                    </span>
-                  )}
-                </div>
-
-                {isTimerApplicable && (
-                  <div className="flex items-center space-x-1.5">
-                    {liveState.timer_active ? (
-                      <button
-                        onClick={pauseTimer}
-                        className="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold transition-colors cursor-pointer flex items-center space-x-1"
-                      >
-                        <Pause className="w-3 h-3 fill-current" />
-                        <span>Pause</span>
-                      </button>
-                    ) : liveState.timer_paused && liveState.remaining_seconds !== null && liveState.remaining_seconds > 0 ? (
-                      <button
-                        onClick={resumeTimer}
-                        className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors cursor-pointer flex items-center space-x-1"
-                      >
-                        <Play className="w-3 h-3 fill-current" />
-                        <span>Resume</span>
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setTimer(initialTimerSeconds, true)}
-                        className="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-colors cursor-pointer flex items-center space-x-1"
-                      >
-                        <Play className="w-3 h-3 fill-current" />
-                        <span>Start ({initialTimerSeconds}s)</span>
-                      </button>
-                    )}
-
-                    {liveState.remaining_seconds !== null && (
-                      <button
-                        onClick={() => resetTimer(initialTimerSeconds)}
-                        className="px-2 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white border border-slate-700 text-xs font-semibold cursor-pointer"
-                        title="Reset timer"
-                      >
-                        Reset
-                      </button>
-                    )}
-
-                    <button
-                      onClick={() => extendTimer(30)}
-                      className="px-2 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white border border-slate-700 text-xs font-semibold cursor-pointer flex items-center space-x-0.5"
-                      title="Add 30s"
-                    >
-                      <Plus className="w-3 h-3" />
-                      <span>30s</span>
-                    </button>
-                  </div>
-                )}
+            {/* Row 3: Current Slide Data Breakdown & Response Stream */}
+            <div className="flex-1 bg-slate-950/60 rounded-xl border border-slate-800 p-2.5 overflow-hidden flex flex-col justify-between text-xs">
+              <div className="flex items-center justify-between border-b border-slate-800/80 pb-1.5 shrink-0">
+                <span className="font-bold text-[11px] text-slate-300">
+                  Slide Response Insights
+                </span>
+                <span className="font-mono text-[10px] text-slate-400">
+                  {responses.length} Submissions recorded
+                </span>
               </div>
 
-              {/* Timer Duration Slider & Preset Chips */}
-              {isTimerApplicable && (
-                <div className="flex items-center justify-between pt-1 text-xs">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-[11px] text-slate-400">Duration:</span>
-                    {[15, 30, 45, 60, 90].map((sec) => (
-                      <button
-                        key={sec}
-                        onClick={() => setInitialTimerSeconds(sec)}
-                        className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold cursor-pointer transition-colors ${
-                          initialTimerSeconds === sec
-                            ? 'bg-indigo-600 text-white'
-                            : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                        }`}
-                      >
-                        {sec}s
-                      </button>
+              <div className="flex-1 overflow-y-auto py-1">
+                {/* Poll / Quiz votes */}
+                {(currentSlide.type_id === 'poll' || currentSlide.type_id === 'quiz') && aggregates?.options && (
+                  <div className="space-y-1">
+                    {aggregates.options.map((opt: any, idx: number) => {
+                      const optText =
+                        (currentSlide.content as any)?.options?.find((o: any) => o.id === opt.option_id)?.text ||
+                        `Option ${idx + 1}`;
+                      const isCorrect = (currentSlide.content as any)?.correct_option_id === opt.option_id;
+                      return (
+                        <div key={opt.option_id} className="flex justify-between items-center py-0.5 text-xs">
+                          <div className="flex items-center space-x-1.5 truncate pr-2">
+                            <span className="font-bold text-slate-400">{String.fromCharCode(65 + idx)}.</span>
+                            <span className="truncate text-slate-200">{optText}</span>
+                            {isCorrect && (
+                              <span className="text-[9px] font-bold text-emerald-400 bg-emerald-950 px-1 rounded">
+                                CORRECT
+                              </span>
+                            )}
+                          </div>
+                          <span className="font-mono font-bold text-slate-300 shrink-0">
+                            {opt.count} votes ({opt.percentage}%)
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Word Cloud frequencies */}
+                {currentSlide.type_id === 'wordcloud' && aggregates?.words && (
+                  <div className="space-y-1">
+                    {aggregates.words.slice(0, 8).map((w: any) => (
+                      <div key={w.text} className="flex justify-between items-center py-0.5 text-xs">
+                        <span className="font-semibold text-slate-200">"{w.text}"</span>
+                        <span className="font-mono font-bold text-indigo-400 bg-indigo-950/60 px-1.5 rounded">
+                          {w.count} submission{w.count > 1 ? 's' : ''}
+                        </span>
+                      </div>
                     ))}
                   </div>
+                )}
 
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="range"
-                      min={5}
-                      max={180}
-                      step={5}
-                      value={initialTimerSeconds}
-                      onChange={(e) => setInitialTimerSeconds(Number(e.target.value))}
-                      className="w-24 accent-indigo-500 h-1.5 bg-slate-700 rounded-lg cursor-pointer"
-                    />
-                    <span className="font-mono text-[11px] text-slate-300 font-bold">{initialTimerSeconds}s</span>
+                {/* Open Ended & QA Stream */}
+                {(currentSlide.type_id === 'open' || currentSlide.type_id === 'qa') && (
+                  <div className="space-y-1">
+                    {responses.slice(0, 4).map((r: any) => (
+                      <div key={r.id} className="flex justify-between items-center text-xs text-slate-300">
+                        <span className="truncate pr-2">"{r.payload}"</span>
+                        <span className="text-[10px] text-slate-500 shrink-0">
+                          {r.participant_name || `Participant ${r.participant_number}`}
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                </div>
-              )}
-            </div>
-
-            {/* D. Deep Slide Data & Moderation Section (Data not directly shown on visual slide) */}
-            <div className="pt-2 border-t border-slate-800 space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => setActiveBottomTab('data')}
-                    className={`text-xs font-bold pb-1 border-b-2 transition-colors cursor-pointer flex items-center space-x-1 ${
-                      activeBottomTab === 'data'
-                        ? 'border-indigo-500 text-indigo-400'
-                        : 'border-transparent text-slate-500 hover:text-slate-300'
-                    }`}
-                  >
-                    <BarChart3 className="w-3.5 h-3.5" />
-                    <span>Detailed Slide Data & Breakdown</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveBottomTab('moderation')}
-                    className={`text-xs font-bold pb-1 border-b-2 transition-colors cursor-pointer flex items-center space-x-1 ${
-                      activeBottomTab === 'moderation'
-                        ? 'border-indigo-500 text-indigo-400'
-                        : 'border-transparent text-slate-500 hover:text-slate-300'
-                    }`}
-                  >
-                    <Shield className="w-3.5 h-3.5" />
-                    <span>Attendees & Moderation ({responses.length})</span>
-                  </button>
-                </div>
-
-                {!liveState.accepting_responses && (
-                  <button
-                    onClick={() => onResetSlide(currentSlide.id)}
-                    className="flex items-center space-x-1 text-[11px] text-red-400 hover:text-red-300 font-semibold cursor-pointer"
-                    title="Clear responses for this slide"
-                  >
-                    <RefreshCw className="w-3 h-3" />
-                    <span>Reset Data</span>
-                  </button>
                 )}
               </div>
-
-              {/* Tab 1 Content: Deep Data / Frequency Breakdown */}
-              {activeBottomTab === 'data' && (
-                <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs">
-                  {/* Word Cloud Frequency Table */}
-                  {currentSlide.type_id === 'wordcloud' && aggregates?.words && (
-                    <div className="space-y-1.5">
-                      <div className="flex justify-between text-[11px] font-bold text-slate-400 border-b border-slate-800 pb-1">
-                        <span>Submitted Word</span>
-                        <span>Frequency Count</span>
-                      </div>
-                      {aggregates.words.length === 0 ? (
-                        <div className="text-center py-3 text-slate-500 text-xs">No words submitted yet.</div>
-                      ) : (
-                        <div className="max-h-28 overflow-y-auto space-y-1 pr-1">
-                          {aggregates.words.map((w: any) => (
-                            <div key={w.text} className="flex justify-between items-center py-0.5 text-xs">
-                              <span className="font-semibold text-slate-200">"{w.text}"</span>
-                              <span className="font-mono font-bold text-indigo-400 bg-indigo-950/60 px-2 py-0.5 rounded border border-indigo-800/60">
-                                {w.count} submission{w.count > 1 ? 's' : ''}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Poll & Quiz Vote Breakdown */}
-                  {(currentSlide.type_id === 'poll' || currentSlide.type_id === 'quiz') && aggregates?.options && (
-                    <div className="space-y-1.5">
-                      <div className="flex justify-between text-[11px] font-bold text-slate-400 border-b border-slate-800 pb-1">
-                        <span>Option</span>
-                        <span>Votes & Share</span>
-                      </div>
-                      <div className="max-h-28 overflow-y-auto space-y-1 pr-1">
-                        {aggregates.options.map((opt: any, idx: number) => {
-                          const optText =
-                            (currentSlide.content as any)?.options?.find((o: any) => o.id === opt.option_id)?.text ||
-                            `Option ${idx + 1}`;
-                          const isCorrect = (currentSlide.content as any)?.correct_option_id === opt.option_id;
-                          return (
-                            <div key={opt.option_id} className="flex justify-between items-center py-0.5 text-xs">
-                              <div className="flex items-center space-x-1.5 truncate pr-2">
-                                <span className="font-bold text-slate-400">{String.fromCharCode(65 + idx)}.</span>
-                                <span className="truncate text-slate-200">{optText}</span>
-                                {isCorrect && (
-                                  <span className="text-[9px] font-bold text-emerald-400 bg-emerald-950 px-1.5 rounded">
-                                    CORRECT
-                                  </span>
-                                )}
-                              </div>
-                              <span className="font-mono font-bold text-slate-300 shrink-0">
-                                {opt.count} votes ({opt.percentage}%)
-                              </span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Open Questions Stream */}
-                  {currentSlide.type_id === 'open' && (
-                    <div className="space-y-1.5">
-                      <div className="text-[11px] font-bold text-slate-400 border-b border-slate-800 pb-1">
-                        Audience Thoughts Stream ({responses.length})
-                      </div>
-                      {responses.length === 0 ? (
-                        <div className="text-center py-3 text-slate-500 text-xs">No responses received yet.</div>
-                      ) : (
-                        <div className="max-h-28 overflow-y-auto space-y-1.5 pr-1">
-                          {responses.map((r: any) => (
-                            <div key={r.id} className="p-1.5 rounded bg-slate-800/60 border border-slate-700/60 text-xs flex justify-between items-center">
-                              <span className="text-slate-200 truncate pr-2">"{r.payload}"</span>
-                              <span className="text-[10px] text-indigo-400 font-semibold shrink-0">
-                                {r.participant_name || `Participant ${r.participant_number}`}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Q&A Questions List */}
-                  {currentSlide.type_id === 'qa' && (
-                    <div className="space-y-1.5">
-                      <div className="text-[11px] font-bold text-slate-400 border-b border-slate-800 pb-1">
-                        Ranked Q&A Questions
-                      </div>
-                      {(!aggregates?.questions || aggregates.questions.length === 0) ? (
-                        <div className="text-center py-3 text-slate-500 text-xs">No audience questions yet.</div>
-                      ) : (
-                        <div className="max-h-28 overflow-y-auto space-y-1.5 pr-1">
-                          {aggregates.questions.map((q: any) => (
-                            <div key={q.id} className="p-1.5 rounded bg-slate-800/60 border border-slate-700/60 flex items-center justify-between text-xs">
-                              <div className="truncate pr-2">
-                                <span className="text-slate-200 font-semibold truncate block">{q.question}</span>
-                                <span className="text-[10px] text-slate-400">by {q.author_name}</span>
-                              </div>
-                              <span className="font-bold text-indigo-400 text-xs shrink-0">▲ {q.upvotes}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Welcome / Content / Leaderboard Generic Data */}
-                  {(currentSlide.type_id === 'welcome' || currentSlide.type_id === 'content' || currentSlide.type_id === 'leaderboard') && (
-                    <div className="text-slate-400 text-xs py-1 space-y-1">
-                      <div>Active Session Code: <span className="font-mono font-bold text-indigo-400">{liveState.join_code}</span></div>
-                      <div>Connected Attendees: <span className="font-mono font-bold text-white">{liveState.active_participants} active</span></div>
-                      <div>Total Responses Stored: <span className="font-mono font-bold text-emerald-400">{liveState.stored_count}</span></div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Tab 2 Content: Attendees & Moderation */}
-              {activeBottomTab === 'moderation' && (
-                <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs">
-                  {responses.length === 0 ? (
-                    <div className="text-center py-3 text-slate-500 text-xs">
-                      No attendee responses submitted for this slide yet.
-                    </div>
-                  ) : (
-                    <div className="max-h-28 overflow-y-auto space-y-1 pr-1">
-                      {responses.map((resp: any) => (
-                        <div
-                          key={resp.id}
-                          className="p-1.5 rounded border border-slate-800 bg-slate-800/40 flex items-center justify-between text-xs"
-                        >
-                          <div className="truncate pr-2">
-                            <span className="font-semibold text-slate-200">
-                              {resp.is_name_hidden ? `Participant ${resp.participant_number} (Hidden)` : (resp.participant_name || `Participant ${resp.participant_number}`)}
-                            </span>
-                            <span className="text-[10px] text-slate-500 block truncate">
-                              {resp.payload}
-                            </span>
-                          </div>
-
-                          <div className="flex items-center space-x-1 shrink-0">
-                            <button
-                              onClick={() => hideParticipantName(resp.participant_id, !resp.is_name_hidden)}
-                              className="p-1 text-slate-400 hover:text-white rounded cursor-pointer"
-                              title={resp.is_name_hidden ? 'Show Name on Screen' : 'Hide Name on Screen'}
-                            >
-                              <HideIcon className="w-3.5 h-3.5" />
-                            </button>
-                            <button
-                              onClick={() => removeParticipant(resp.participant_id)}
-                              className="p-1 text-slate-400 hover:text-red-400 rounded cursor-pointer"
-                              title="Remove Participant"
-                            >
-                              <UserX className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
           </div>
         </div>
 
         {/* ═════════════════════════════════════════════════════════════════
-            RIGHT PANE (40%): Right-Top (Next Slide Replica) & Right-Bottom (Presenter Notes)
+            RIGHT PANE (Preview Workspace): Width 40vw, Height 85vh
             ═════════════════════════════════════════════════════════════════ */}
-        <div className="w-full lg:w-[40%] flex flex-col gap-3 h-full overflow-hidden min-w-0">
-          {/* FRAME 3: Right-Top (Next Slide Visual Replica) */}
-          <div className="h-[48%] min-h-[250px] bg-slate-900/90 rounded-2xl border border-slate-800 p-2.5 flex flex-col justify-between overflow-hidden shadow-xl relative">
+        <div className="w-[40vw] h-[85vh] max-h-[85vh] flex flex-col overflow-hidden shrink-0">
+          {/* ─────────────────────────────────────────────────────────────
+              SUB-PANE 3: Next Slide Frame (Top Right): Width 40vw, Height 40vh
+              Aspect-Locked Visual Replica of Upcoming Slide
+              ───────────────────────────────────────────────────────────── */}
+          <div className="w-[40vw] h-[40vh] max-h-[40vh] flex flex-col shrink-0 overflow-hidden bg-slate-950 p-2.5 relative">
             {/* Header */}
-            <div className="flex items-center justify-between pb-1 px-1 border-b border-slate-800/80 shrink-0">
-              <div className="flex items-center space-x-2 text-xs font-bold text-amber-400 uppercase tracking-wider">
+            <div className="h-7 flex items-center justify-between px-2 pb-1.5 border-b border-slate-800/80 shrink-0 text-xs">
+              <div className="flex items-center space-x-2 text-amber-400 font-bold uppercase tracking-wider text-[11px]">
                 <FastForward className="w-3.5 h-3.5" />
-                <span>Next Slide · Upcoming</span>
+                <span>Next Slide · Upcoming Preview</span>
               </div>
               <div>
                 {upcomingSlide ? (
@@ -784,8 +685,8 @@ export const LivePanel: React.FC<LivePanelProps> = ({ onEndPresenting, onResetSl
               </div>
             </div>
 
-            {/* Next Slide Preview or End Presentation Card */}
-            <div className="flex-1 flex items-center justify-center overflow-hidden my-auto">
+            {/* Next Slide Preview or End Presentation Placeholder */}
+            <div className="flex-1 w-full h-[calc(40vh-28px)] overflow-hidden flex items-center justify-center relative">
               {upcomingSlide ? (
                 <LiveSlideDisplay
                   slide={upcomingSlide}
@@ -798,65 +699,70 @@ export const LivePanel: React.FC<LivePanelProps> = ({ onEndPresenting, onResetSl
                   isNextPreview={true}
                 />
               ) : (
-                <div className="my-auto flex flex-col items-center justify-center p-6 text-center space-y-2">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                    <CheckCircle2 className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-white">End of Presentation</h4>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                      This is the final slide of this activity.
-                    </p>
-                  </div>
+                <div className="flex flex-col items-center justify-center p-6 text-center text-slate-500 space-y-2">
+                  <CheckCircle2 className="w-10 h-10 text-emerald-500" />
+                  <div className="text-sm font-bold text-slate-300">Presentation Complete</div>
+                  <p className="text-xs text-slate-500">You are on the final slide of this activity.</p>
                 </div>
               )}
             </div>
           </div>
 
-          {/* FRAME 4: Right-Bottom (Presenter Notes with In-Place Editing & Cues) */}
-          <div className="h-[52%] min-h-[270px] bg-slate-900/95 rounded-2xl border border-slate-800 p-4 flex flex-col justify-between shadow-xl overflow-hidden space-y-3">
-            {/* Notes Header */}
-            <div className="flex items-center justify-between pb-2 border-b border-slate-800 shrink-0">
-              <div className="flex items-center space-x-2 text-xs font-bold text-emerald-400 uppercase tracking-wider">
-                <MessageSquare className="w-3.5 h-3.5" />
-                <span>Presenter Notes · Speaking Points</span>
+          {/* ─────────────────────────────────────────────────────────────
+              SUB-PANE 4: Speaker Notes Frame (Bottom Right): Width 40vw, Height 45vh
+              Presenter Cue Cards with in-place debounced autosave
+              ───────────────────────────────────────────────────────────── */}
+          <div className="w-[40vw] h-[45vh] max-h-[45vh] flex flex-col shrink-0 overflow-y-auto bg-slate-900/90 border-t border-slate-800 p-3.5 space-y-2.5">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-slate-800 pb-2 shrink-0">
+              <div className="flex items-center space-x-2">
+                <FileText className="w-4 h-4 text-amber-400" />
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-200">
+                  Speaker Notes & Cue Cards
+                </span>
               </div>
-              <div className="flex items-center space-x-2 text-[10px] font-mono text-slate-400">
-                <FileText className="w-3 h-3 text-slate-500" />
-                <span>{notesSavedNotice}</span>
+              <div className="flex items-center space-x-2 text-[10px]">
+                <span className="text-slate-400">{notesWordCount} words</span>
+                <span className="text-slate-600">·</span>
+                <span className={notesSavedNotice === 'Saved' ? 'text-emerald-400 font-semibold' : 'text-amber-400 font-semibold'}>
+                  {notesSavedNotice}
+                </span>
               </div>
             </div>
 
-            {/* In-Place Editable Notes Area */}
-            <div className="flex-1 flex flex-col min-h-0">
+            {/* Interactive Notes Editor */}
+            <div className="flex-1 flex flex-col min-h-0 space-y-2">
               <textarea
                 value={notesDraft}
                 onChange={(e) => handleNotesChange(e.target.value)}
                 onBlur={handleNotesBlur}
-                placeholder="Type speaker notes, talking points, key discussion questions, or reminders for this slide..."
-                className="w-full flex-1 bg-slate-950/80 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/60 leading-relaxed resize-none shadow-inner font-sans"
+                placeholder="Type your presenter cue notes, talking points, questions to ask, or timing reminders for this slide here... (Auto-saves continuously)"
+                className="flex-1 w-full p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-200 placeholder-slate-600 focus:outline-hidden focus:ring-1 focus:ring-indigo-500 font-sans resize-none leading-relaxed min-h-[120px]"
               />
-            </div>
 
-            {/* Facilitator Timing & Guidance Cues */}
-            <div className="p-2.5 rounded-xl bg-slate-800/40 border border-slate-800 text-[11px] space-y-1.5 shrink-0">
-              <div className="flex items-center justify-between text-slate-400">
-                <span className="font-semibold text-slate-300">Slide Guidance Cues</span>
-                <span className="font-mono text-[10px]">
-                  Target time: {currentSlide.settings?.timer_seconds || 30}s
-                </span>
+              {/* Facilitator Contextual Tips Card */}
+              <div className="p-2.5 rounded-xl bg-slate-800/40 border border-slate-800 text-[11px] text-slate-400 flex items-start space-x-2 shrink-0">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-slate-300">Facilitator Guidance:</strong>{' '}
+                  {currentSlide.type_id === 'welcome' &&
+                    'Allow 2-3 minutes for participants to connect via QR code or short join link before advancing.'}
+                  {currentSlide.type_id === 'quiz' &&
+                    'Read the question aloud, start the 30-second timer, and give participants 5 seconds before revealing the correct answer.'}
+                  {currentSlide.type_id === 'poll' &&
+                    'Watch live vote counts rise before toggling results visibility onto the projector screen.'}
+                  {currentSlide.type_id === 'wordcloud' &&
+                    'Ask participants to submit 1-2 concise keywords to optimize word clustering visualization.'}
+                  {currentSlide.type_id === 'open' &&
+                    'Highlight thoughtful participant ideas from the response stream as they arrive.'}
+                  {currentSlide.type_id === 'leaderboard' &&
+                    'Celebrate the Top 5 podium winners with applause before moving to the next section.'}
+                  {currentSlide.type_id === 'content' &&
+                    'Focus attendee attention on key principles and takeaway insights.'}
+                  {currentSlide.type_id === 'qa' &&
+                    'Address the top-upvoted audience questions first.'}
+                </div>
               </div>
-              <p className="text-slate-400 leading-snug">
-                {currentSlide.type_id === 'welcome'
-                  ? 'Warm up attendees, ensure everyone scans the QR code or opens the web link, then proceed to the opening poll.'
-                  : currentSlide.type_id === 'quiz'
-                  ? 'Give participants time to submit answers before clicking "Reveal Correct Answer" to build engagement.'
-                  : currentSlide.type_id === 'wordcloud'
-                  ? 'Highlight recurring themes as words scale up dynamically in the visual cloud.'
-                  : currentSlide.type_id === 'leaderboard'
-                  ? 'Celebrate top performers and recognize speedy correct submissions.'
-                  : 'Encourage audience questions and discussion before stepping forward.'}
-              </p>
             </div>
           </div>
         </div>

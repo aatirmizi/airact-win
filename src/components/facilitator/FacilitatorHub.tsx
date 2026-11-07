@@ -37,6 +37,7 @@ export const FacilitatorHub: React.FC<FacilitatorHubProps> = ({ onOpenStartModal
     setActiveView,
     liveState,
     isConnected,
+    setIsNetworkModalOpen,
   } = usePresenter();
 
   const [testModalOpen, setTestModalOpen] = useState(false);
@@ -287,9 +288,9 @@ export const FacilitatorHub: React.FC<FacilitatorHubProps> = ({ onOpenStartModal
             </div>
           </div>
 
-          {/* Card 4: Network & Device Setup Test */}
+          {/* Card 4: Network Settings Helper & Participant Device Setup */}
           <div
-            onClick={() => setTestModalOpen(true)}
+            onClick={() => setIsNetworkModalOpen(true)}
             className="group bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-purple-500 dark:hover:border-purple-500 p-4.5 rounded-2xl shadow-md hover:shadow-lg transition-all cursor-pointer flex items-start space-x-4"
           >
             <div className="w-11 h-11 rounded-xl bg-purple-50 dark:bg-purple-950/50 border border-purple-200 dark:border-purple-800 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-xs">
@@ -298,14 +299,14 @@ export const FacilitatorHub: React.FC<FacilitatorHubProps> = ({ onOpenStartModal
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
-                  Test Network & Participant Setup
+                  Network Settings Helper
                 </h3>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400">
-                  Diagnostic
+                  Wi-Fi & QR Test
                 </span>
               </div>
               <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                Check local Wi-Fi connectivity, test QR code join links, and launch a simulated mobile phone participant window.
+                Select your room Wi-Fi or Ethernet adapter, generate real-time participant test QR codes, and verify phone connectivity.
               </p>
             </div>
           </div>

@@ -7,10 +7,12 @@ import {
   Users,
   Trophy,
   Pause,
+  Clock,
   Tv,
 } from 'lucide-react';
 import { D3WordCloud } from '../common/D3WordCloud.js';
 import { getThemeTextureStyle, isThemeLight, getFieldTextStyle } from '../../utils/themes.js';
+import { AspectScaledCanvas, AspectRatioType } from '../common/AspectScaledCanvas.js';
 
 interface LiveSlideDisplayProps {
   slide: Slide;
@@ -18,7 +20,7 @@ interface LiveSlideDisplayProps {
   aggregates?: any;
   step?: string;
   isResultsVisible?: boolean;
-  aspectRatio?: '16:9' | '16:10' | '4:3';
+  aspectRatio?: AspectRatioType;
   joinCode?: string;
   joinUrl?: string;
   qrCodeUrl?: string;
@@ -47,35 +49,31 @@ export const LiveSlideDisplay: React.FC<LiveSlideDisplayProps> = ({
   const content = (slide.content || {}) as any;
   const typeId = slide.type_id;
 
-  const aspectStyle =
-    aspectRatio === '4:3' ? '4/3' : aspectRatio === '16:10' ? '16/10' : '16/9';
-
   return (
-    <div className="w-full h-full flex items-center justify-center p-1 overflow-hidden select-none">
+    <AspectScaledCanvas
+      aspectRatio={aspectRatio}
+      containerClassName="w-full h-full"
+      wrapperClassName="rounded-2xl border border-slate-700/80 shadow-2xl overflow-hidden"
+    >
       <div
-        style={{
-          ...getThemeTextureStyle(theme),
-          aspectRatio: aspectStyle,
-        }}
-        className={`w-full max-h-full rounded-xl border border-slate-700/80 shadow-2xl relative overflow-y-auto flex flex-col justify-between transition-all ${
-          isNextPreview ? 'p-3 sm:p-4 text-xs' : 'p-4 sm:p-6'
-        }`}
+        style={getThemeTextureStyle(theme)}
+        className="w-full h-full relative p-12 sm:p-14 flex flex-col justify-between overflow-hidden select-none"
       >
         {/* Blank Screen Overlay */}
         {isBlanked && !isNextPreview && (
-          <div className="absolute inset-0 bg-black z-40 flex flex-col items-center justify-center p-6 text-center animate-in fade-in">
-            <span className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-1">
+          <div className="absolute inset-0 bg-black z-50 flex flex-col items-center justify-center p-8 text-center animate-in fade-in">
+            <span className="text-xl font-mono text-slate-400 uppercase tracking-widest mb-2">
               Projector Blanked
             </span>
-            <p className="text-[11px] text-slate-600">Screen is currently dark on projector</p>
+            <p className="text-sm text-slate-500">Screen output is currently dark on projector</p>
           </div>
         )}
 
         {/* Frozen Indicator */}
         {isFrozen && !isNextPreview && (
-          <div className="absolute top-2 left-1/2 -translate-x-1/2 z-40 px-3 py-0.5 rounded-full bg-amber-500 text-slate-950 text-[10px] font-bold flex items-center space-x-1 shadow-md">
-            <Pause className="w-3 h-3 fill-current" />
-            <span>PROJECTOR FROZEN</span>
+          <div className="absolute top-6 left-1/2 -translate-x-1/2 z-50 px-5 py-1.5 rounded-full bg-amber-500 text-slate-950 text-xs font-black tracking-wider flex items-center space-x-2 shadow-xl">
+            <Pause className="w-4 h-4 fill-current" />
+            <span>PROJECTOR DISPLAY FROZEN</span>
           </div>
         )}
 
@@ -84,46 +82,61 @@ export const LiveSlideDisplay: React.FC<LiveSlideDisplayProps> = ({
             ═════════════════════════════════════════════════════════════ */}
         {typeId === 'welcome' && (
           <div className="flex-1 flex flex-col justify-between my-auto">
-            <div className="flex flex-row items-center justify-between gap-4">
+            {/* Top Left Logo */}
+            <div className="flex items-center space-x-3 mb-6">
+              <img
+                src="/assets/aistudio/AirAct_Community_Learning_Logo_44a129c1.png"
+                alt="AirAct"
+                className="h-12 w-auto object-contain"
+              />
+              <span className={`text-base font-extrabold ${isLight ? 'text-slate-900' : 'text-slate-100'}`}>
+                AirAct
+              </span>
+              <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${isLight ? 'text-emerald-700 bg-emerald-50 border border-emerald-200' : 'text-emerald-400 bg-emerald-950/60 border border-emerald-800/60'}`}>
+                Interactive Presentation
+              </span>
+            </div>
+
+            <div className="flex flex-row items-center justify-between gap-12 my-auto">
               {/* Left Column: Workshop Info */}
-              <div className="flex-1 space-y-2.5 max-w-xl text-left">
+              <div className="flex-1 space-y-6 text-left">
                 <div
-                  className={`inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
+                  className={`inline-flex items-center space-x-2 px-3.5 py-1 rounded-full text-xs font-bold border ${
                     isLight
                       ? 'bg-indigo-50 border-indigo-200 text-indigo-700'
                       : 'bg-indigo-500/20 border-indigo-500/30 text-indigo-400'
                   }`}
                 >
-                  <Sparkles className="w-3 h-3" />
-                  <span>Interactive Workshop Session</span>
+                  <Sparkles className="w-4 h-4" />
+                  <span>Live Audience Session</span>
                 </div>
 
                 <h1
                   style={getFieldTextStyle(content.styles, 'title')}
-                  className={`font-extrabold tracking-tight leading-tight ${
-                    isNextPreview ? 'text-lg sm:text-xl' : 'text-xl sm:text-2xl lg:text-3xl'
-                  } ${!content.styles?.title?.color ? (isLight ? 'text-slate-950 font-black' : 'text-white') : ''}`}
+                  className={`text-5xl lg:text-6xl font-black tracking-tight leading-tight ${
+                    !content.styles?.title?.color ? (isLight ? 'text-slate-950' : 'text-white') : ''
+                  }`}
                 >
-                  {content.title || 'Interactive Workshop'}
+                  {content.title || 'Interactive Workshop & Presentation'}
                 </h1>
 
                 {/* Presenter Box */}
                 {(content.presenter_name || content.presenter_info) && (
                   <div
-                    className={`p-2.5 rounded-xl border max-w-sm space-y-0.5 ${
+                    className={`p-5 rounded-2xl border max-w-lg space-y-1.5 shadow-sm ${
                       isLight
-                        ? 'bg-white/95 border-slate-200/90 text-slate-900 shadow-xs'
+                        ? 'bg-white/95 border-slate-200/90 text-slate-900'
                         : 'bg-slate-900/80 border-slate-800 text-white'
                     }`}
                   >
                     {content.presenter_name && (
-                      <div className="text-xs font-bold flex items-center space-x-1">
-                        <span className={isLight ? 'text-slate-500 font-normal text-[10px]' : 'text-slate-400 font-normal text-[10px]'}>
+                      <div className="text-xl font-bold flex items-center space-x-2">
+                        <span className={isLight ? 'text-slate-500 font-medium text-base' : 'text-slate-400 font-medium text-base'}>
                           Presented by
                         </span>
                         <span
                           style={getFieldTextStyle(content.styles, 'presenter_name')}
-                          className={isLight ? 'text-indigo-600 font-extrabold' : 'text-indigo-400'}
+                          className={isLight ? 'text-indigo-600 font-black' : 'text-indigo-400 font-black'}
                         >
                           {content.presenter_name}
                         </span>
@@ -132,7 +145,7 @@ export const LiveSlideDisplay: React.FC<LiveSlideDisplayProps> = ({
                     {content.presenter_info && (
                       <div
                         style={getFieldTextStyle(content.styles, 'presenter_info')}
-                        className={`text-[10px] ${isLight ? 'text-slate-600' : 'text-slate-400'}`}
+                        className={`text-sm font-medium ${isLight ? 'text-slate-600' : 'text-slate-400'}`}
                       >
                         {content.presenter_info}
                       </div>
@@ -141,30 +154,34 @@ export const LiveSlideDisplay: React.FC<LiveSlideDisplayProps> = ({
                 )}
 
                 {/* Join Message & Code */}
-                <div className="space-y-1.5 pt-0.5">
+                <div className="space-y-3 pt-2">
                   <p
                     style={getFieldTextStyle(content.styles, 'join_message')}
-                    className={`text-xs font-medium leading-relaxed ${isLight ? 'text-slate-700' : 'text-slate-300'}`}
+                    className={`text-lg font-medium leading-relaxed ${isLight ? 'text-slate-700' : 'text-slate-300'}`}
                   >
-                    {content.join_message || 'Join on your phone or laptop:'}
+                    {content.join_message || 'Scan the QR code or use the link below to participate live from your phone or laptop:'}
                   </p>
 
                   <div
-                    className={`flex items-center gap-3 p-2 rounded-xl border max-w-sm ${
+                    className={`flex items-center gap-6 p-4 rounded-2xl border max-w-xl shadow-md ${
                       isLight
-                        ? 'bg-white/95 border-slate-200/90 text-slate-900 shadow-xs'
+                        ? 'bg-white/95 border-slate-200/90 text-slate-900'
                         : 'bg-slate-900/90 border-slate-800 text-white'
                     }`}
                   >
                     <div className="flex-1 min-w-0">
-                      <div className="text-[8px] uppercase tracking-wider font-semibold text-slate-400">Web Link</div>
-                      <div className={`text-xs font-mono font-bold truncate ${isLight ? 'text-slate-950' : 'text-white'}`}>
+                      <div className="text-[11px] uppercase tracking-wider font-semibold text-slate-400 mb-0.5">
+                        Web Link
+                      </div>
+                      <div className={`text-xl font-mono font-bold truncate underline underline-offset-4 ${isLight ? 'text-slate-950' : 'text-white'}`}>
                         {joinUrl || `${window.location.host}/j/${joinCode}`}
                       </div>
                     </div>
-                    <div className={`border-l pl-3 ${isLight ? 'border-slate-200' : 'border-slate-800'}`}>
-                      <div className="text-[8px] uppercase tracking-wider font-semibold text-slate-400">Code</div>
-                      <div className={`text-sm font-mono font-extrabold tracking-wider ${isLight ? 'text-indigo-600' : 'text-indigo-400'}`}>
+                    <div className={`border-l pl-6 ${isLight ? 'border-slate-200' : 'border-slate-800'}`}>
+                      <div className="text-[11px] uppercase tracking-wider font-semibold text-slate-400 mb-0.5">
+                        Session Code
+                      </div>
+                      <div className={`text-3xl font-mono font-extrabold tracking-wider ${isLight ? 'text-indigo-600' : 'text-indigo-400'}`}>
                         {joinCode}
                       </div>
                     </div>
@@ -172,23 +189,23 @@ export const LiveSlideDisplay: React.FC<LiveSlideDisplayProps> = ({
                 </div>
               </div>
 
-              {/* Right Column: QR Code Thumbnail */}
+              {/* Right Column: High-Res QR Code */}
               <div className="flex flex-col items-center justify-center shrink-0">
-                <div className={`p-2 bg-white rounded-2xl ${isLight ? 'shadow-md border-2 border-slate-200/90' : 'shadow-xl border-2 border-indigo-500/30'}`}>
+                <div className={`p-5 bg-white rounded-3xl ${isLight ? 'shadow-xl border-4 border-slate-200/90' : 'shadow-2xl border-4 border-indigo-500/30'}`}>
                   {qrCodeUrl ? (
                     <img
                       src={qrCodeUrl}
-                      alt="Join QR"
-                      className={`${isNextPreview ? 'w-20 h-20' : 'w-28 h-28 sm:w-32 sm:h-32'} rounded-lg object-contain`}
+                      alt="Join QR Code"
+                      className="w-64 h-64 lg:w-72 lg:h-72 rounded-xl object-contain"
                     />
                   ) : (
-                    <div className={`${isNextPreview ? 'w-20 h-20' : 'w-28 h-28 sm:w-32 sm:h-32'} flex items-center justify-center bg-slate-100 rounded-lg`}>
-                      <QrCode className="w-12 h-12 text-slate-400" />
+                    <div className="w-64 h-64 lg:w-72 lg:h-72 flex items-center justify-center bg-slate-100 rounded-xl">
+                      <QrCode className="w-32 h-32 text-slate-400" />
                     </div>
                   )}
                 </div>
-                <span className={`text-[9px] font-semibold mt-1 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
-                  Scan to join
+                <span className={`text-sm font-semibold mt-3 ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>
+                  Scan with phone camera to participate
                 </span>
               </div>
             </div>
@@ -196,20 +213,20 @@ export const LiveSlideDisplay: React.FC<LiveSlideDisplayProps> = ({
         )}
 
         {/* ═════════════════════════════════════════════════════════════
-            2. NORMAL SLIDES (Poll, Quiz, Word Cloud, Open, QA, Leaderboard, Content)
+            2. NORMAL INTERACTIVE SLIDES (Poll, Quiz, Word Cloud, Open, QA, Leaderboard, Content)
             ═════════════════════════════════════════════════════════════ */}
         {typeId !== 'welcome' && (
           <div className="flex-1 flex flex-col justify-between my-auto">
             {/* Top Header: Question Prompt */}
-            <div className="mb-2">
-              <span className={`text-[9px] font-bold uppercase tracking-wider block mb-0.5 ${isLight ? 'text-indigo-600' : 'text-indigo-400'}`}>
+            <div className="mb-6">
+              <span className={`text-xs font-bold uppercase tracking-widest block mb-2 ${isLight ? 'text-indigo-600' : 'text-indigo-400'}`}>
                 {typeId}
               </span>
               <h2
                 style={getFieldTextStyle(content.styles, content.question !== undefined ? 'question' : 'title')}
-                className={`font-extrabold tracking-tight leading-tight ${
-                  isNextPreview ? 'text-sm sm:text-base' : 'text-base sm:text-lg lg:text-xl'
-                } ${!content.styles?.[content.question !== undefined ? 'question' : 'title']?.color ? (isLight ? 'text-slate-950 font-black' : 'text-white') : ''}`}
+                className={`text-4xl lg:text-5xl font-black tracking-tight leading-tight ${
+                  !content.styles?.[content.question !== undefined ? 'question' : 'title']?.color ? (isLight ? 'text-slate-950' : 'text-white') : ''
+                }`}
               >
                 {content.question || content.title || 'Slide Title'}
               </h2>
@@ -217,7 +234,7 @@ export const LiveSlideDisplay: React.FC<LiveSlideDisplayProps> = ({
 
             {/* A. Poll / Quiz Options Display */}
             {(typeId === 'poll' || typeId === 'quiz') && content.options && (
-              <div className="space-y-1.5 my-auto max-w-3xl w-full">
+              <div className="space-y-4 my-auto max-w-4xl w-full mx-auto">
                 {content.options.map((opt: any, idx: number) => {
                   const aggOpt = aggregates?.options?.find((o: any) => o.option_id === opt.id);
                   const percentage = aggOpt?.percentage || 0;
@@ -226,21 +243,21 @@ export const LiveSlideDisplay: React.FC<LiveSlideDisplayProps> = ({
                   const showBars = isResultsVisible || step === 'results' || step === 'stats' || isCorrect;
 
                   return (
-                    <div key={opt.id} className="space-y-0.5">
+                    <div key={opt.id} className="space-y-2">
                       <div
-                        className={`p-2 rounded-lg border flex items-center justify-between text-xs transition-all ${
+                        className={`p-4 rounded-2xl border flex items-center justify-between text-lg transition-all ${
                           isCorrect
                             ? isLight
-                              ? 'bg-emerald-100 border-emerald-400 text-slate-950 shadow-xs ring-1 ring-emerald-500/40'
-                              : 'bg-emerald-950/60 border-emerald-500 text-emerald-100 shadow-sm ring-1 ring-emerald-500/40'
+                              ? 'bg-emerald-100 border-emerald-400 text-slate-950 shadow-md ring-2 ring-emerald-500/40'
+                              : 'bg-emerald-950/60 border-emerald-500 text-emerald-100 shadow-lg ring-2 ring-emerald-500/40'
                             : isLight
-                            ? 'bg-white/95 border-slate-200/90 text-slate-950 shadow-2xs'
+                            ? 'bg-white/95 border-slate-200/90 text-slate-950 shadow-sm'
                             : 'bg-slate-800/80 border-slate-700/80 text-white'
                         }`}
                       >
-                        <div className="flex items-center space-x-2 truncate pr-2">
+                        <div className="flex items-center space-x-3.5 truncate pr-4">
                           <span
-                            className={`w-5 h-5 rounded flex items-center justify-center font-bold text-[10px] shrink-0 ${
+                            className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 ${
                               isCorrect
                                 ? 'bg-emerald-500 text-white'
                                 : isLight
@@ -252,29 +269,29 @@ export const LiveSlideDisplay: React.FC<LiveSlideDisplayProps> = ({
                           </span>
                           <span
                             style={getFieldTextStyle(content.styles, 'options')}
-                            className="font-semibold truncate text-[11px] sm:text-xs"
+                            className="font-bold truncate text-xl lg:text-2xl"
                           >
                             {opt.text}
                           </span>
                           {isCorrect && (
-                            <span className="flex items-center space-x-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded-full text-emerald-700 bg-emerald-100 dark:text-emerald-300 dark:bg-emerald-950 shrink-0">
-                              <CheckCircle2 className="w-2.5 h-2.5" />
+                            <span className="flex items-center space-x-1 text-xs font-bold px-3 py-1 rounded-full text-emerald-700 bg-emerald-100 dark:text-emerald-300 dark:bg-emerald-950 shrink-0">
+                              <CheckCircle2 className="w-3.5 h-3.5" />
                               <span>CORRECT</span>
                             </span>
                           )}
                         </div>
 
                         {showBars && (
-                          <span className={`text-[10px] font-mono font-bold shrink-0 ${isLight ? 'text-slate-800' : 'text-slate-300'}`}>
-                            {count} ({percentage}%)
+                          <span className={`text-lg font-mono font-bold shrink-0 ${isLight ? 'text-slate-800' : 'text-slate-300'}`}>
+                            {count} votes ({percentage}%)
                           </span>
                         )}
                       </div>
 
                       {showBars && (
-                        <div className={`h-1.5 w-full rounded-full overflow-hidden ${isLight ? 'bg-slate-200/80' : 'bg-slate-900'}`}>
+                        <div className={`h-4 w-full rounded-full overflow-hidden p-0.5 ${isLight ? 'bg-slate-200/80' : 'bg-slate-900'}`}>
                           <div
-                            className={`h-full rounded-full transition-all duration-500 ${
+                            className={`h-full rounded-full transition-all duration-700 ease-out ${
                               isCorrect
                                 ? 'bg-gradient-to-r from-emerald-500 to-teal-400'
                                 : 'bg-gradient-to-r from-indigo-600 to-violet-500'
@@ -289,8 +306,8 @@ export const LiveSlideDisplay: React.FC<LiveSlideDisplayProps> = ({
 
                 {/* Quiz Explanation Reveal */}
                 {typeId === 'quiz' && step !== 'question' && content.explanation && (
-                  <div className={`mt-2 p-2 rounded-lg border text-[10px] leading-relaxed animate-in fade-in ${isLight ? 'bg-white/95 border-emerald-300 text-slate-800' : 'bg-slate-800/90 border-emerald-500/30 text-slate-200'}`}>
-                    <span className="font-bold text-emerald-600 block">Explanation:</span>
+                  <div className={`mt-4 p-4 rounded-xl border text-sm leading-relaxed animate-in fade-in shadow-sm ${isLight ? 'bg-white/95 border-emerald-300 text-slate-800' : 'bg-slate-800/90 border-emerald-500/30 text-slate-200'}`}>
+                    <span className="font-bold text-emerald-600 block mb-1">Explanation:</span>
                     <p style={getFieldTextStyle(content.styles, 'explanation')}>{content.explanation}</p>
                   </div>
                 )}
@@ -299,56 +316,60 @@ export const LiveSlideDisplay: React.FC<LiveSlideDisplayProps> = ({
 
             {/* B. Word Cloud Display */}
             {typeId === 'wordcloud' && (
-              <div className={`my-auto p-2 rounded-xl border flex items-center justify-center overflow-hidden ${isNextPreview ? 'h-28' : 'h-36 sm:h-44'} ${isLight ? 'bg-white/90 border-slate-200 shadow-2xs' : 'bg-slate-950/60 border-slate-800'}`}>
+              <div className={`my-auto p-4 rounded-3xl border flex items-center justify-center overflow-hidden h-96 w-full ${isLight ? 'bg-white/90 border-slate-200 shadow-sm' : 'bg-slate-950/60 border-slate-800'}`}>
                 {aggregates?.words && aggregates.words.length > 0 ? (
                   <D3WordCloud words={aggregates.words} className="w-full h-full" />
                 ) : (
-                  <div className="text-center text-[11px] text-slate-400">
+                  <div className="text-center text-base text-slate-400">
                     Waiting for audience words...
                   </div>
                 )}
               </div>
             )}
 
-            {/* C. Open-Ended Thoughts */}
+            {/* C. Open-Ended Thoughts Stream */}
             {typeId === 'open' && (
-              <div className={`my-auto grid grid-cols-1 sm:grid-cols-2 gap-2 overflow-y-auto ${isNextPreview ? 'max-h-28' : 'max-h-40'}`}>
+              <div className="my-auto grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
                 {aggregates?.items && aggregates.items.length > 0 ? (
-                  aggregates.items.slice(0, 4).map((item: any, i: number) => (
+                  aggregates.items.slice(0, 6).map((item: any, i: number) => (
                     <div
                       key={item.id || i}
-                      className={`p-2 rounded-lg border text-xs space-y-1 ${isLight ? 'bg-white/95 border-slate-200 text-slate-900' : 'bg-slate-800/80 border-slate-700 text-white'}`}
+                      className={`p-4 rounded-2xl border text-sm space-y-2 shadow-sm ${isLight ? 'bg-white/95 border-slate-200 text-slate-900' : 'bg-slate-800/80 border-slate-700 text-white'}`}
                     >
-                      <p className="font-medium truncate leading-snug">"{item.text}"</p>
-                      <span className={`text-[9px] ${isLight ? 'text-indigo-600' : 'text-indigo-400'}`}>{item.author || 'Participant'}</span>
+                      <p className="font-medium text-base leading-snug">"{item.text}"</p>
+                      <span className={`text-xs font-semibold ${isLight ? 'text-indigo-600' : 'text-indigo-400'}`}>
+                        {item.author || 'Participant'}
+                      </span>
                     </div>
                   ))
                 ) : (
-                  <div className="col-span-2 text-center text-[11px] text-slate-400 py-4">
+                  <div className="col-span-2 text-center text-sm text-slate-400 py-10">
                     Waiting for audience responses...
                   </div>
                 )}
               </div>
             )}
 
-            {/* D. Q&A Display */}
+            {/* D. Crowdsourced Q&A */}
             {typeId === 'qa' && (
-              <div className={`my-auto space-y-1.5 overflow-y-auto ${isNextPreview ? 'max-h-28' : 'max-h-40'}`}>
+              <div className="my-auto space-y-3 max-h-96 overflow-y-auto">
                 {aggregates?.questions && aggregates.questions.length > 0 ? (
-                  aggregates.questions.slice(0, 3).map((q: any) => (
+                  aggregates.questions.slice(0, 5).map((q: any) => (
                     <div
                       key={q.id}
-                      className={`p-2 rounded-lg border flex items-center justify-between text-xs ${isLight ? 'bg-white/95 border-slate-200 text-slate-950' : 'bg-slate-800/80 border-slate-700 text-white'}`}
+                      className={`p-4 rounded-2xl border flex items-center justify-between text-base shadow-sm ${isLight ? 'bg-white/95 border-slate-200 text-slate-950' : 'bg-slate-800/80 border-slate-700 text-white'}`}
                     >
-                      <div className="truncate pr-2">
-                        <p className="font-semibold truncate">{q.question}</p>
-                        <span className="text-[9px] text-slate-400">by {q.author_name}</span>
+                      <div className="truncate pr-4">
+                        <p className="font-bold text-lg truncate">{q.question}</p>
+                        <span className="text-xs text-slate-400">by {q.author_name}</span>
                       </div>
-                      <span className="text-xs font-bold text-indigo-500 shrink-0">▲ {q.upvotes}</span>
+                      <span className="text-base font-bold text-indigo-500 shrink-0 px-3 py-1 rounded-lg bg-indigo-500/10">
+                        ▲ {q.upvotes}
+                      </span>
                     </div>
                   ))
                 ) : (
-                  <div className="text-center text-[11px] text-slate-400 py-4">
+                  <div className="text-center text-sm text-slate-400 py-10">
                     No questions received yet.
                   </div>
                 )}
@@ -357,31 +378,31 @@ export const LiveSlideDisplay: React.FC<LiveSlideDisplayProps> = ({
 
             {/* E. Leaderboard Podium */}
             {typeId === 'leaderboard' && (
-              <div className="my-auto max-w-sm mx-auto space-y-1 w-full">
+              <div className="my-auto max-w-xl mx-auto space-y-3 w-full">
                 {(aggregates?.leaderboard || [
                   { rank: 1, name: 'Top Leader', score: 400 },
                   { rank: 2, name: 'Runner Up', score: 320 },
                   { rank: 3, name: 'Third Place', score: 280 },
-                ]).slice(0, 3).map((lead: any, idx: number) => (
+                ]).slice(0, 5).map((lead: any, idx: number) => (
                   <div
                     key={lead.rank || idx}
-                    className={`p-1.5 rounded-lg border flex items-center justify-between text-xs ${
+                    className={`p-3.5 rounded-2xl border flex items-center justify-between text-base shadow-sm ${
                       idx === 0
                         ? isLight
-                          ? 'bg-amber-100 border-amber-300 text-slate-950'
-                          : 'bg-amber-500/20 border-amber-500/50 text-amber-200'
+                          ? 'bg-amber-100 border-amber-300 text-slate-950 font-bold'
+                          : 'bg-amber-500/20 border-amber-500/50 text-amber-200 font-bold'
                         : isLight
                         ? 'bg-white/95 border-slate-200 text-slate-900'
                         : 'bg-slate-800/60 border-slate-700/60 text-slate-300'
                     }`}
                   >
-                    <div className="flex items-center space-x-2">
-                      <span className={`w-5 h-5 rounded flex items-center justify-center font-bold text-[10px] ${idx === 0 ? 'bg-amber-400 text-slate-950' : idx === 1 ? 'bg-slate-300 text-slate-950' : 'bg-amber-700 text-white'}`}>
+                    <div className="flex items-center space-x-3">
+                      <span className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-sm ${idx === 0 ? 'bg-amber-400 text-slate-950' : idx === 1 ? 'bg-slate-300 text-slate-950' : 'bg-amber-700 text-white'}`}>
                         {lead.rank || idx + 1}
                       </span>
-                      <span className="font-bold truncate">{lead.name}</span>
+                      <span className="font-bold text-lg truncate">{lead.name}</span>
                     </div>
-                    <span className="font-mono font-bold text-indigo-500 text-xs">{lead.score} pts</span>
+                    <span className="font-mono font-extrabold text-indigo-500 text-lg">{lead.score} pts</span>
                   </div>
                 ))}
               </div>
@@ -389,11 +410,11 @@ export const LiveSlideDisplay: React.FC<LiveSlideDisplayProps> = ({
 
             {/* F. Content Slide */}
             {typeId === 'content' && (
-              <div className="my-auto text-center space-y-2 max-w-lg mx-auto">
+              <div className="my-auto text-center space-y-4 max-w-2xl mx-auto">
                 {content.body && (
                   <p
                     style={getFieldTextStyle(content.styles, 'body')}
-                    className={`text-xs sm:text-sm leading-relaxed whitespace-pre-wrap ${isLight ? 'text-slate-800' : 'text-slate-300'}`}
+                    className={`text-2xl leading-relaxed whitespace-pre-wrap ${isLight ? 'text-slate-800' : 'text-slate-300'}`}
                   >
                     {content.body}
                   </p>
@@ -404,18 +425,18 @@ export const LiveSlideDisplay: React.FC<LiveSlideDisplayProps> = ({
         )}
 
         {/* Bottom Minimal Strip */}
-        <div className={`pt-2 border-t flex items-center justify-between text-[10px] ${isLight ? 'border-slate-200 text-slate-600' : 'border-slate-800 text-slate-400'}`}>
-          <div className="flex items-center space-x-1 font-mono">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="truncate max-w-[140px]">{joinUrl || `${window.location.host}/j/${joinCode}`}</span>
+        <div className={`pt-4 border-t flex items-center justify-between text-xs font-medium ${isLight ? 'border-slate-200 text-slate-600' : 'border-slate-800 text-slate-400'}`}>
+          <div className="flex items-center space-x-2 font-mono">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="truncate max-w-xs">{joinUrl || `${window.location.host}/j/${joinCode}`}</span>
           </div>
 
-          <div className="flex items-center space-x-2 font-mono">
+          <div className="flex items-center space-x-3 font-mono">
             {activeParticipants > 0 && <span>{activeParticipants} online</span>}
-            <span className="capitalize">{aspectRatio}</span>
+            <span className="capitalize px-2 py-0.5 rounded bg-slate-800/60 text-slate-300 border border-slate-700/60">{aspectRatio}</span>
           </div>
         </div>
       </div>
-    </div>
+    </AspectScaledCanvas>
   );
 };

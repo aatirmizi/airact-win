@@ -15,6 +15,7 @@ import {
   Download,
   Upload,
   Radio,
+  Wifi,
   ExternalLink,
   Users,
   LayoutTemplate,
@@ -69,6 +70,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     updateActivitySettings,
     isActivityOpen,
     closeActivity,
+    setIsNetworkModalOpen,
   } = usePresenter();
 
   const [openMenu, setOpenMenu] = useState<MenuKey>(null);
@@ -369,6 +371,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     </div>
                     <span className="text-[10px] font-mono text-slate-400">Hub</span>
                   </button>
+
                   <div className="my-1.5 border-t border-slate-100 dark:border-slate-800" />
                   <button
                     onClick={() => {
@@ -385,7 +388,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </button>
                 </div>
               )}
-
             </div>
 
             {/* 2. PRESENT MENU */}
@@ -604,6 +606,24 @@ export const Navbar: React.FC<NavbarProps> = ({
                       <Sliders className="w-4 h-4 text-amber-500" />
                       <span className="font-medium">Session Defaults</span>
                     </div>
+                  </button>
+
+                  <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
+
+                  <button
+                    onClick={() => {
+                      setOpenMenu(null);
+                      setIsNetworkModalOpen(true);
+                    }}
+                    className="w-full px-3.5 py-2 flex items-center justify-between text-xs text-slate-700 dark:text-slate-200 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-left cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <Wifi className="w-4 h-4 text-purple-500" />
+                      <span className="font-medium">Network Settings Helper...</span>
+                    </div>
+                    <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-purple-100 dark:bg-purple-950/60 text-purple-600 dark:text-purple-300">
+                      Intranet
+                    </span>
                   </button>
                 </div>
               )}

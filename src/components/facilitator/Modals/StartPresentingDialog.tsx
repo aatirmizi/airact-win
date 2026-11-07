@@ -9,7 +9,14 @@ interface StartPresentingDialogProps {
 }
 
 export const StartPresentingDialog: React.FC<StartPresentingDialogProps> = ({ isOpen, onClose }) => {
-  const { activity, selectedSlideIndex, startPresenting, updateActivitySettings } = usePresenter();
+  const {
+    activity,
+    selectedSlideIndex,
+    startPresenting,
+    updateActivitySettings,
+    networkStatus,
+    setIsNetworkModalOpen,
+  } = usePresenter();
 
   const [startPoint, setStartPoint] = useState<'beginning' | 'selected'>('beginning');
   const [joinMode, setJoinMode] = useState<JoinMode>('display_name');
@@ -230,9 +237,24 @@ export const StartPresentingDialog: React.FC<StartPresentingDialogProps> = ({ is
             />
           </div>
 
-          <div className="p-3 bg-indigo-50/60 dark:bg-indigo-950/20 rounded-xl border border-indigo-100 dark:border-indigo-900/40 text-[11px] text-indigo-900 dark:text-indigo-300 flex items-center space-x-2">
-            <Globe className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
-            <span>Generates an instant 4-character join code and QR code for audience access on phones/laptops.</span>
+          <div className="p-3 bg-indigo-50/60 dark:bg-indigo-950/20 rounded-xl border border-indigo-100 dark:border-indigo-900/40 text-[11px] text-indigo-900 dark:text-indigo-300 flex items-center justify-between">
+            <div className="flex items-center space-x-2 min-w-0">
+              <Globe className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+              <div className="truncate">
+                <span>Join URL: </span>
+                <span className="font-mono font-bold">{networkStatus?.appUrl || 'Auto-detected Network'}</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                setIsNetworkModalOpen(true);
+              }}
+              className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline shrink-0 ml-2 cursor-pointer"
+            >
+              Network Helper →
+            </button>
           </div>
         </div>
 

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { D3WordCloud } from '../common/D3WordCloud.js';
 import { getThemeTextureStyle, isThemeLight, getFieldTextStyle } from '../../utils/themes.js';
+import { AspectScaledCanvas, AspectRatioType } from '../common/AspectScaledCanvas.js';
 
 export const ProjectorView: React.FC = () => {
   const [view, setView] = useState<IProjectorView | null>(null);
@@ -328,13 +329,19 @@ export const ProjectorView: React.FC = () => {
 
   const { presentation, slide, counters, join, theme } = view;
   const isLight = isThemeLight(theme);
+  const activeAspectRatio: AspectRatioType =
+    (presentation as any)?.aspect_ratio ||
+    (presentation as any)?.settings?.aspect_ratio ||
+    '16:9';
 
   // 1. Blank state
   if (presentation.state === 'blank') {
     return (
-      <div className="w-screen h-screen bg-slate-950 text-white flex flex-col justify-between p-12">
+      <div className="w-screen h-screen bg-black text-white flex flex-col justify-between p-12 select-none">
         <div />
-        <div className="text-center text-slate-600 text-lg">Screen blanked by presenter</div>
+        <div className="text-center text-slate-500 text-xl font-medium tracking-wide">
+          Screen blanked by presenter
+        </div>
         <div className="text-right text-xs text-slate-600 font-mono">
           Press B to unblank · Press F to freeze
         </div>
@@ -345,14 +352,22 @@ export const ProjectorView: React.FC = () => {
   // 2. Ended state
   if (presentation.state === 'ended') {
     return (
-      <div className="w-screen h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-8 text-center">
-        <div className="w-20 h-20 rounded-full bg-indigo-600/20 text-indigo-400 flex items-center justify-center mb-6">
-          <Sparkles className="w-10 h-10" />
-        </div>
-        <h1 className="text-4xl font-extrabold mb-3 tracking-tight">The presentation has ended</h1>
-        <p className="text-lg text-slate-400 max-w-md">
-          Thank you for your active participation!
-        </p>
+      <div className="w-screen h-screen bg-black flex items-center justify-center overflow-hidden select-none">
+        <AspectScaledCanvas
+          aspectRatio={activeAspectRatio}
+          containerClassName="w-full h-full bg-black flex items-center justify-center"
+          wrapperClassName="overflow-hidden shadow-2xl relative"
+        >
+          <div className="w-full h-full bg-slate-950 text-white flex flex-col items-center justify-center p-12 text-center">
+            <div className="w-20 h-20 rounded-full bg-indigo-600/20 text-indigo-400 flex items-center justify-center mb-6">
+              <Sparkles className="w-10 h-10" />
+            </div>
+            <h1 className="text-4xl font-extrabold mb-3 tracking-tight">The presentation has ended</h1>
+            <p className="text-lg text-slate-400 max-w-md">
+              Thank you for your active participation!
+            </p>
+          </div>
+        </AspectScaledCanvas>
       </div>
     );
   }
@@ -360,10 +375,16 @@ export const ProjectorView: React.FC = () => {
   // 3. Lobby (before starting)
   if (presentation.state === 'lobby' || !slide) {
     return (
-      <div
-        style={getThemeTextureStyle(theme)}
-        className="w-screen h-screen flex flex-col justify-between p-12 select-none transition-all"
-      >
+      <div className="w-screen h-screen bg-black flex items-center justify-center overflow-hidden select-none">
+        <AspectScaledCanvas
+          aspectRatio={activeAspectRatio}
+          containerClassName="w-full h-full bg-black flex items-center justify-center"
+          wrapperClassName="overflow-hidden shadow-2xl relative"
+        >
+          <div
+            style={getThemeTextureStyle(theme)}
+            className="w-full h-full flex flex-col justify-between p-12 select-none transition-all relative"
+          >
         <div className="text-center max-w-3xl mx-auto pt-8">
           <span className="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-wider">
             AirAct Interactive
@@ -424,6 +445,8 @@ export const ProjectorView: React.FC = () => {
           </div>
         </div>
       </div>
+        </AspectScaledCanvas>
+      </div>
     );
   }
 
@@ -431,10 +454,16 @@ export const ProjectorView: React.FC = () => {
   if (slide.type_id === 'welcome') {
     const content = slide.content as any;
     return (
-      <div
-        style={getThemeTextureStyle(theme)}
-        className="w-screen h-screen flex flex-col justify-between p-10 overflow-hidden relative select-none transition-all"
-      >
+      <div className="w-screen h-screen bg-black flex items-center justify-center overflow-hidden select-none">
+        <AspectScaledCanvas
+          aspectRatio={activeAspectRatio}
+          containerClassName="w-full h-full bg-black flex items-center justify-center"
+          wrapperClassName="overflow-hidden shadow-2xl relative"
+        >
+          <div
+            style={getThemeTextureStyle(theme)}
+            className="w-full h-full flex flex-col justify-between p-10 overflow-hidden relative select-none transition-all"
+          >
         {/* Top Left Logo (AirAct by SkillUpgrade Network) */}
         <div
           className={`absolute top-8 left-10 z-20 flex items-center space-x-3 px-4 py-2 rounded-2xl border transition-colors ${
@@ -644,8 +673,10 @@ export const ProjectorView: React.FC = () => {
           </div>
         </div>
       </div>
-    );
-  }
+      </AspectScaledCanvas>
+    </div>
+  );
+}
 
   // 5. Normal Live Presentation Slides (Poll, Quiz, Word Cloud, Open, QA, Leaderboard, Content)
   // Requirement 2:
@@ -658,10 +689,16 @@ export const ProjectorView: React.FC = () => {
   const remainingSecs = slide.remaining_ms !== null ? Math.ceil(slide.remaining_ms / 1000) : null;
 
   return (
-    <div
-      style={getThemeTextureStyle(theme)}
-      className="w-screen h-screen flex overflow-hidden relative select-none transition-all"
-    >
+    <div className="w-screen h-screen bg-black flex items-center justify-center overflow-hidden select-none">
+      <AspectScaledCanvas
+        aspectRatio={activeAspectRatio}
+        containerClassName="w-full h-full bg-black flex items-center justify-center"
+        wrapperClassName="overflow-hidden shadow-2xl relative"
+      >
+        <div
+          style={getThemeTextureStyle(theme)}
+          className="w-full h-full flex overflow-hidden relative select-none transition-all"
+        >
       {/* Freeze indicator banner */}
       {presentation.state === 'frozen' && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-1.5 rounded-full bg-amber-500 text-slate-950 text-xs font-bold flex items-center space-x-1.5 shadow-lg">
@@ -1093,6 +1130,8 @@ export const ProjectorView: React.FC = () => {
           </div>
         </div>
       </div>
+        </div>
+      </AspectScaledCanvas>
     </div>
   );
 };

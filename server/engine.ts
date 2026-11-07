@@ -61,11 +61,21 @@ export class PresentationEngine {
   // QR Code data URL cache
   public cachedQrCode: string = '';
 
-  public setAppUrl(url: string) {
+  public async setAppUrl(url: string, force: boolean = false) {
     if (url && url.startsWith('http')) {
       const clean = url.replace(/\/$/, '');
-      if (!this.currentAppUrl || (this.currentAppUrl.includes('localhost') && !clean.includes('localhost'))) {
+      if (force || !this.currentAppUrl || (this.currentAppUrl.includes('localhost') && !clean.includes('localhost'))) {
         this.currentAppUrl = clean;
+        if (this.isLive && this.joinCode) {
+          try {
+            this.cachedQrCode = await QRCode.toDataURL(`${this.currentAppUrl}/j/${this.joinCode}`, {
+              margin: 2,
+              width: 400,
+              color: { dark: '#000000', light: '#ffffff' },
+            });
+            this.broadcastViews();
+          } catch {}
+        }
       }
     }
   }
@@ -581,6 +591,15 @@ export class PresentationEngine {
     this.broadcastViews();
   }
 
+  public setAspectRatio(ratio: '16:9' | '16:10' | '4:3') {
+    if (!this.activity.settings) {
+      this.activity.settings = { content_language: 'en', start_point: 'beginning', join_mode: 'display_name' };
+    }
+    this.activity.settings.aspect_ratio = ratio;
+    this.bumpRev();
+    this.broadcastViews();
+  }
+
   public bumpRev() {
     this.rev += 1;
   }
@@ -714,6 +733,7 @@ export class PresentationEngine {
       presentation: {
         state,
         title: this.activity.manifest.meta.name,
+        aspect_ratio: this.activity.settings?.aspect_ratio || '16:9',
       },
       counters: {
         active,
@@ -974,6 +994,7 @@ export class PresentationEngine {
       current_slide_responses: slideResponses,
       slides_summary: slidesSummary,
       qr_code: this.cachedQrCode,
+      aspect_ratio: this.activity.settings?.aspect_ratio || '16:9',
       rev: this.rev,
     };
   }

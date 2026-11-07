@@ -8,6 +8,8 @@ import { PreviewPane } from './PreviewPane.js';
 import { StartPresentingDialog } from './Modals/StartPresentingDialog.js';
 import { EndPresentingDialog } from './Modals/EndPresentingDialog.js';
 import { ResetConfirmDialog } from './Modals/ResetConfirmDialog.js';
+import { NetworkSettingsModal } from './Modals/NetworkSettingsModal.js';
+import { NetworkWarningDialog } from './Modals/NetworkWarningBanner.js';
 import { HostSecurityView } from './views/HostSecurityView.js';
 import { RosterView } from './views/RosterView.js';
 import { SessionDefaultsView } from './views/SessionDefaultsView.js';
@@ -43,6 +45,12 @@ export const Workspace: React.FC<WorkspaceProps> = ({
     activeView,
     setActiveView,
     isActivityOpen,
+    isNetworkModalOpen,
+    setIsNetworkModalOpen,
+    storedConnectionMissing,
+    missingNetworkDetails,
+    dismissMissingNetworkWarning,
+    checkNetworkStatus,
   } = usePresenter();
 
   const [endModalOpen, setEndModalOpen] = useState(false);
@@ -303,6 +311,24 @@ export const Workspace: React.FC<WorkspaceProps> = ({
         isOpen={Boolean(resetModalSlideId)}
         slideId={resetModalSlideId}
         onClose={() => setResetModalSlideId(null)}
+      />
+
+      {/* Network Settings Helper Modal */}
+      <NetworkSettingsModal
+        isOpen={isNetworkModalOpen}
+        onClose={() => setIsNetworkModalOpen(false)}
+        onSaved={(_newUrl) => {
+          checkNetworkStatus();
+        }}
+      />
+
+      {/* Stored Network Missing Warning Dialog */}
+      <NetworkWarningDialog
+        isOpen={storedConnectionMissing}
+        missingAddress={missingNetworkDetails?.address}
+        missingInterfaceName={missingNetworkDetails?.interfaceName}
+        onOpenNetworkHelper={() => setIsNetworkModalOpen(true)}
+        onDismiss={dismissMissingNetworkWarning}
       />
     </div>
   );

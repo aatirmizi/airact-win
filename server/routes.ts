@@ -17,6 +17,13 @@ import {
   revokeHostToken,
   getSecurityStorageInfo,
 } from './hostSecurity.js';
+import {
+  getNetworkStatus,
+  saveStoredSettings,
+  recordTestPing,
+  getTestPingStatus,
+  generateQrDataUrl,
+} from './networkManager.js';
 
 // Helper to get local private IPv4 addresses for intranet use
 function getLocalIpAddresses(): string[] {
@@ -46,6 +53,11 @@ function getAppBaseUrl(req?: Request | IncomingMessage): string {
   if (process.env.APP_URL && process.env.APP_URL.startsWith('http')) {
     return process.env.APP_URL.replace(/\/$/, '');
   }
+  const reqHost = req ? ((req as Request).get ? (req as Request).get('host') : (req.headers ? req.headers.host : undefined)) : undefined;
+  const status = getNetworkStatus(reqHost);
+  if (status.activeUrl && !status.activeUrl.includes('localhost')) {
+    return status.activeUrl;
+  }
   if (req) {
     const headers = (req as Request).headers || req.headers;
     const proto = headers['x-forwarded-proto'] || (req as Request).protocol || 'http';
@@ -55,7 +67,7 @@ function getAppBaseUrl(req?: Request | IncomingMessage): string {
     }
   }
   const port = process.env.PORT || 3000;
-  return `http://localhost:${port}`;
+  return status.activeUrl || `http://localhost:${port}`;
 }
 
 export function createApiRouter(engine: PresentationEngine = defaultEngine) {
@@ -69,6 +81,23 @@ export function createApiRouter(engine: PresentationEngine = defaultEngine) {
       (req.query.token as string) ||
       null
     );
+  };
+
+  // Middleware requiring a valid Host session token
+  const requireFacilitatorAuth = (req: Request, res: Response, next: NextFunction) => {
+    const token =
+      req.headers['x-facilitator-token'] ||
+      (req.headers.authorization ? req.headers.authorization.replace('Bearer ', '') : null) ||
+      req.query.fac_token;
+
+    if (token && validateHostToken(String(token))) {
+      return next();
+    }
+
+    return res.status(401).json({
+      error: 'Access Restricted: Valid Host PIN authorization required.',
+      requiresAuth: true,
+    });
   };
 
   // -------------------------------------------------------------
@@ -395,16 +424,90 @@ export function createApiRouter(engine: PresentationEngine = defaultEngine) {
 
     // Network & Intranet info endpoint
   router.get('/system/network-info', (req: Request, res: Response) => {
-    const localIps = getLocalIpAddresses();
-    const port = Number(process.env.PORT || 3000);
-    const appUrl = getAppBaseUrl(req);
-    engine.setAppUrl(appUrl);
+    const reqHost = req.get('host');
+    const status = getNetworkStatus(reqHost);
+    engine.setAppUrl(status.activeUrl);
     return res.json({
-      appUrl,
-      localIps,
-      port,
-      isCloud: Boolean(process.env.APP_URL && !process.env.APP_URL.includes('localhost')),
+      appUrl: status.activeUrl,
+      localIps: status.interfaces.map((i) => i.address),
+      port: status.port,
+      isCloud: status.isCloud,
+      storedConnectionMissing: status.storedConnectionMissing,
+      missingDetails: status.missingDetails,
     });
+  });
+
+  // Comprehensive Network Interfaces & Priority Helper Endpoint
+  router.get('/system/network-interfaces', (req: Request, res: Response) => {
+    const reqHost = req.get('host');
+    const status = getNetworkStatus(reqHost);
+    return res.json(status);
+  });
+
+  // Save chosen network connection (interface or custom URL)
+  router.post('/system/network-interfaces/save', requireFacilitatorAuth, async (req: Request, res: Response) => {
+    const { mode, selectedInterfaceName, selectedAddress, customUrl } = req.body;
+    const port = Number(process.env.PORT || 3000);
+
+    if (mode === 'custom' && (!customUrl || !customUrl.trim().startsWith('http'))) {
+      return res.status(400).json({ error: 'Please enter a valid URL starting with http:// or https://' });
+    }
+
+    const saved = saveStoredSettings({
+      mode: mode || 'auto',
+      selectedInterfaceName: selectedInterfaceName || undefined,
+      selectedAddress: selectedAddress || undefined,
+      customUrl: customUrl ? customUrl.trim() : undefined,
+      port,
+    });
+
+    if (!saved) {
+      return res.status(500).json({ error: 'Failed to persist network settings to disk' });
+    }
+
+    const status = getNetworkStatus(req.get('host'));
+    await engine.setAppUrl(status.activeUrl, true);
+
+    return res.json({
+      success: true,
+      activeUrl: status.activeUrl,
+      status,
+    });
+  });
+
+  // Generate QR Code for arbitrary URL (for connection testing)
+  router.post('/system/network-test/qr', async (req: Request, res: Response) => {
+    const { url } = req.body;
+    if (!url || typeof url !== 'string') {
+      return res.status(400).json({ error: 'Invalid URL provided' });
+    }
+    const qrDataUrl = await generateQrDataUrl(url);
+    return res.json({ qrDataUrl });
+  });
+
+  // Mobile Phone Ping endpoint (hit when phone visits /test-connection)
+  router.post('/system/network-test/ping', (req: Request, res: Response) => {
+    const { sessionId, userAgent } = req.body;
+    if (!sessionId) {
+      return res.status(400).json({ error: 'sessionId is required' });
+    }
+    const clientIp = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || 'Unknown IP';
+    recordTestPing(sessionId, clientIp, userAgent || req.headers['user-agent']);
+    return res.json({
+      success: true,
+      timestamp: Date.now(),
+      clientIp,
+    });
+  });
+
+  // Facilitator status poll for phone connection
+  router.get('/system/network-test/status', (req: Request, res: Response) => {
+    const sessionId = req.query.session as string;
+    if (!sessionId) {
+      return res.json({ connected: false });
+    }
+    const result = getTestPingStatus(sessionId);
+    return res.json(result);
   });
 
   // Get Projector View
@@ -418,23 +521,6 @@ export function createApiRouter(engine: PresentationEngine = defaultEngine) {
   // -------------------------------------------------------------
   // FACILITATOR & PRESENTATION CONTROL ROUTES (Restricted to localhost / authorized facilitator)
   // -------------------------------------------------------------
-
-  // Middleware requiring a valid Host session token
-  const requireFacilitatorAuth = (req: Request, res: Response, next: NextFunction) => {
-    const token =
-      req.headers['x-facilitator-token'] ||
-      (req.headers.authorization ? req.headers.authorization.replace('Bearer ', '') : null) ||
-      req.query.fac_token;
-
-    if (token && validateHostToken(String(token))) {
-      return next();
-    }
-
-    return res.status(401).json({
-      error: 'Access Restricted: Valid Host PIN authorization required.',
-      requiresAuth: true,
-    });
-  };
 
   // Host PIN Verification endpoint (Rate-limited, brute-force protected)
   router.post('/auth/verify-host', (req: Request, res: Response) => {
@@ -919,6 +1005,8 @@ export function setupWebSocketServer(server: any, engine: PresentationEngine = d
             engine.setFrozen(msg.frozen !== undefined ? Boolean(msg.frozen) : !engine.isFrozen);
           } else if (msg.type === 'blank') {
             engine.setBlanked(msg.blanked !== undefined ? Boolean(msg.blanked) : !engine.isBlanked);
+          } else if (msg.type === 'aspect-ratio' || msg.type === 'set-aspect-ratio') {
+            if (msg.aspectRatio) engine.setAspectRatio(msg.aspectRatio);
           }
         } catch {}
       });

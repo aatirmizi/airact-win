@@ -80,6 +80,14 @@ interface PresenterContextType {
   setAspectRatio: (ratio: '16:9' | '16:10' | '4:3') => void;
   inspectorTab: 'slide' | 'theme' | 'timing';
   setInspectorTab: (tab: 'slide' | 'theme' | 'timing') => void;
+  // Network Settings Helper State
+  isNetworkModalOpen: boolean;
+  setIsNetworkModalOpen: (open: boolean) => void;
+  networkStatus: any;
+  checkNetworkStatus: () => Promise<void>;
+  storedConnectionMissing: boolean;
+  missingNetworkDetails?: { address?: string; interfaceName?: string };
+  dismissMissingNetworkWarning: () => void;
 }
 
 const PresenterContext = createContext<PresenterContextType | undefined>(undefined);
@@ -94,11 +102,42 @@ export const PresenterProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [isActivityOpen, setIsActivityOpen] = useState<boolean>(false);
   const [inspectorTab, setInspectorTab] = useState<'slide' | 'theme' | 'timing'>('slide');
 
+  // Network Settings Helper & Missing Connection State
+  const [isNetworkModalOpen, setIsNetworkModalOpen] = useState<boolean>(false);
+  const [networkStatus, setNetworkStatus] = useState<any>(null);
+  const [storedConnectionMissing, setStoredConnectionMissing] = useState<boolean>(false);
+  const [missingNetworkDetails, setMissingNetworkDetails] = useState<{ address?: string; interfaceName?: string } | undefined>();
+  const [warningDismissed, setWarningDismissed] = useState<boolean>(false);
+
   // Undo / Redo stacks
   const [undoStack, setUndoStack] = useState<ActivityData[]>([]);
   const [redoStack, setRedoStack] = useState<ActivityData[]>([]);
 
   const wsRef = useRef<WebSocket | null>(null);
+
+  // Check network interfaces and verify stored connection availability
+  const checkNetworkStatus = useCallback(async () => {
+    try {
+      const res = await fetch('/api/system/network-info');
+      if (res.ok) {
+        const data = await res.json();
+        setNetworkStatus(data);
+        if (data.storedConnectionMissing && !warningDismissed) {
+          setStoredConnectionMissing(true);
+          setMissingNetworkDetails(data.missingDetails);
+        } else {
+          setStoredConnectionMissing(false);
+        }
+      }
+    } catch (err) {
+      console.warn('Network check failed:', err);
+    }
+  }, [warningDismissed]);
+
+  const dismissMissingNetworkWarning = useCallback(() => {
+    setStoredConnectionMissing(false);
+    setWarningDismissed(true);
+  }, []);
 
   // Helper for authenticated facilitator fetches using dynamic host session token
   const facFetch = useCallback(async (url: string, options: RequestInit = {}) => {
@@ -154,9 +193,10 @@ export const PresenterProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   }, [facFetch]);
 
-  // Connect Facilitator WebSocket
+  // Connect Facilitator WebSocket & Check Network
   useEffect(() => {
     fetchState();
+    checkNetworkStatus();
 
     const hostToken = sessionStorage.getItem('airact_host_token') || '';
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -971,6 +1011,13 @@ export const PresenterProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         setAspectRatio,
         inspectorTab,
         setInspectorTab,
+        isNetworkModalOpen,
+        setIsNetworkModalOpen,
+        networkStatus,
+        checkNetworkStatus,
+        storedConnectionMissing,
+        missingNetworkDetails,
+        dismissMissingNetworkWarning,
       }}
     >
       {children}

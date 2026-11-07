@@ -319,6 +319,7 @@ export interface ProjectorView {
   presentation: {
     state: 'lobby' | 'live' | 'blank' | 'frozen' | 'ended';
     title: string;
+    aspect_ratio?: '16:9' | '16:10' | '4:3';
   };
   counters: {
     active: number;

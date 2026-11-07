@@ -1,11 +1,60 @@
 import React, { useState, useEffect } from 'react';
 import { ThemeProvider } from './context/ThemeContext.js';
-import { PresenterProvider } from './context/PresenterContext.js';
+import { PresenterProvider, usePresenter } from './context/PresenterContext.js';
 import { Navbar } from './components/common/Navbar.js';
 import { Workspace } from './components/facilitator/Workspace.js';
 import { ProjectorView } from './components/projector/ProjectorView.js';
 import { ParticipantApp } from './components/participant/ParticipantApp.js';
 import { HostAuthScreen } from './components/facilitator/Modals/HostAuthScreen.js';
+import { NetworkTestScreen } from './components/participant/NetworkTestScreen.js';
+
+interface HostWorkspaceLayoutProps {
+  previewOpen: boolean;
+  setPreviewOpen: (open: boolean) => void;
+  startModalOpen: boolean;
+  setStartModalOpen: (open: boolean) => void;
+}
+
+function HostWorkspaceLayout({
+  previewOpen,
+  setPreviewOpen,
+  startModalOpen,
+  setStartModalOpen,
+}: HostWorkspaceLayoutProps) {
+  const { liveState } = usePresenter();
+  const isLive = Boolean(liveState?.is_live);
+
+  if (isLive) {
+    return (
+      <div className="w-screen h-screen bg-slate-950 text-slate-100 font-sans antialiased overflow-hidden select-none">
+        <Workspace
+          previewOpen={previewOpen}
+          setPreviewOpen={setPreviewOpen}
+          startModalOpen={startModalOpen}
+          setStartModalOpen={setStartModalOpen}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-screen w-screen flex flex-col bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans antialiased overflow-x-auto overflow-y-hidden presenter-scroll-container">
+      <div className="min-w-[1180px] h-full flex flex-col flex-1">
+        <Navbar
+          onOpenStartModal={() => setStartModalOpen(true)}
+          onOpenPreview={() => setPreviewOpen(!previewOpen)}
+          previewOpen={previewOpen}
+        />
+        <Workspace
+          previewOpen={previewOpen}
+          setPreviewOpen={setPreviewOpen}
+          startModalOpen={startModalOpen}
+          setStartModalOpen={setStartModalOpen}
+        />
+      </div>
+    </div>
+  );
+}
 
 export default function App() {
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
@@ -17,6 +66,15 @@ export default function App() {
   });
 
   const pathname = window.location.pathname;
+
+  // 0. Dedicated Participant Network Test Route (Hit when scanning test QR code from phone)
+  if (pathname.startsWith('/test-connection') || pathname.startsWith('/test-network')) {
+    return (
+      <ThemeProvider>
+        <NetworkTestScreen />
+      </ThemeProvider>
+    );
+  }
 
   // 1. Dedicated Projector Route (Full screen, no back navigation to presenter)
   if (pathname.startsWith('/projector')) {
@@ -96,27 +154,19 @@ export default function App() {
     return (
       <ThemeProvider>
         <PresenterProvider>
-          <div className="h-screen w-screen flex flex-col bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans antialiased overflow-x-auto overflow-y-hidden presenter-scroll-container">
-            <div className="min-w-[1180px] h-full flex flex-col flex-1">
-              <Navbar
-                onOpenStartModal={() => setStartModalOpen(true)}
-                onOpenPreview={() => setPreviewOpen(!previewOpen)}
-                previewOpen={previewOpen}
-              />
-              <Workspace
-                previewOpen={previewOpen}
-                setPreviewOpen={setPreviewOpen}
-                startModalOpen={startModalOpen}
-                setStartModalOpen={setStartModalOpen}
-              />
-            </div>
-          </div>
+          <HostWorkspaceLayout
+            previewOpen={previewOpen}
+            setPreviewOpen={setPreviewOpen}
+            startModalOpen={startModalOpen}
+            setStartModalOpen={setStartModalOpen}
+          />
         </PresenterProvider>
       </ThemeProvider>
     );
   }
 
   // 3. Default Route: Participant / Audience View (/, /j/:code, /p, /participant, /join)
+
   // When participants navigate to the main URL on intranet or internet, they strictly land here!
   const code = pathname.startsWith('/j/')
     ? pathname.replace('/j/', '').split('/')[0]
