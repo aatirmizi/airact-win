@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:actvty:schema:validation-rules",
+  "title": "Validation-rule catalogue",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "catalogue_version",
+    "rules"
+  ],
+  "properties": {
+    "catalogue_version": {
+      "type": "integer"
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "scope",
+          "severity",
+          "rule",
+          "error_code",
+          "stage",
+          "acceptance"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^VAL-[A-Z]-\\d{3}$"
+          },
+          "scope": {
+            "enum": [
+              "container",
+              "manifest",
+              "cross-file",
+              "database",
+              "slide",
+              "save",
+              "protection"
+            ]
+          },
+          "severity": {
+            "enum": [
+              "error",
+              "warning"
+            ]
+          },
+          "rule": {
+            "type": "string"
+          },
+          "error_code": {
+            "type": "string"
+          },
+          "stage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 8
+          },
+          "acceptance": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^AT-[A-Z]+-\\d{3}$"
+            },
+            "minItems": 1
+          }
+        }
+      }
+    }
+  }
+}

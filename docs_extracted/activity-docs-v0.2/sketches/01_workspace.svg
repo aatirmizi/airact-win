@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" width="1280" height="800" role="img" aria-labelledby="t d" font-family="DejaVu Sans, Arial, Helvetica, sans-serif">
+<title id="t">Facilitator Workspace layout sketch</title>
+<desc id="d">Low-fidelity layout: menu, tabs, top bar, slide sidebar, canvas, preview pane, inspector and status bar. Not a visual design.</desc>
+<rect width="1280" height="800" fill="#ffffff"/>
+<rect x="0" y="0" width="1280" height="28" rx="0" fill="#e6e6e6" stroke="#bbb" stroke-width="1.2"/>
+<text x="14" y="19" font-size="13" text-anchor="start" font-weight="normal" fill="#222">File     Edit     Window     Help</text>
+<rect x="0" y="28" width="1280" height="32" rx="0" fill="#d9d9d9" stroke="#bbb" stroke-width="1.2"/>
+<rect x="10" y="32" width="200" height="28" rx="0" fill="#fff" stroke="#444" stroke-width="1.2"/>
+<text x="22" y="51" font-size="13" text-anchor="start" font-weight="bold" fill="#222">Workshop A  ●</text>
+<rect x="214" y="35" width="150" height="25" rx="0" fill="#eee" stroke="#999" stroke-width="1.2"/>
+<text x="226" y="52" font-size="13" text-anchor="start" font-weight="normal" fill="#666">Workshop B</text>
+<text x="378" y="52" font-size="16" text-anchor="start" font-weight="normal" fill="#666">+</text>
+<rect x="0" y="60" width="1280" height="44" rx="0" fill="#f4f4f4" stroke="#bbb" stroke-width="1.2"/>
+<text x="14" y="88" font-size="13" text-anchor="start" font-weight="bold" fill="#222">Add slide:</text>
+<rect x="88" y="70" width="70" height="26" rx="4" fill="#fff" stroke="#444" stroke-width="1.2"/>
+<text x="123.0" y="87.5" font-size="13" text-anchor="middle" font-weight="normal" fill="#222">Poll</text>
+<rect x="164" y="70" width="70" height="26" rx="4" fill="#fff" stroke="#444" stroke-width="1.2" stroke-dasharray="4 3"/>
+<text x="199.0" y="87.5" font-size="13" text-anchor="middle" font-weight="normal" fill="#222">Quiz</text>
+<rect x="240" y="70" width="84" height="26" rx="4" fill="#fff" stroke="#444" stroke-width="1.2" stroke-dasharray="4 3"/>
+<text x="282.0" y="87.5" font-size="13" text-anchor="middle" font-weight="normal" fill="#222">Content</text>
+<text x="336" y="88" font-size="11" text-anchor="start" font-weight="normal" fill="#777">(dashed = later stage)</text>
+<text x="560" y="88" font-size="12" text-anchor="start" font-weight="normal" fill="#555">Saved 10:42</text>
+<text x="650" y="88" font-size="11" text-anchor="start" font-weight="normal" fill="#777">Preview unavailable: complete slide 2 first</text>
+<rect x="960" y="70" width="100" height="26" rx="4" fill="#eee" stroke="#aaa" stroke-width="1.2"/>
+<text x="1010.0" y="87.5" font-size="13" text-anchor="middle" font-weight="normal" fill="#888">Preview</text>
+<rect x="1070" y="70" width="130" height="26" rx="4" fill="#222" stroke="#444" stroke-width="1.2"/>
+<text x="1135.0" y="87.5" font-size="13" text-anchor="middle" font-weight="normal" fill="#fff">Present  ▶</text>
+<rect x="0" y="104" width="200" height="656" rx="0" fill="#fafafa" stroke="#bbb" stroke-width="1.2"/>
+<text x="14" y="126" font-size="13" text-anchor="start" font-weight="bold" fill="#222">Slides</text>
+<rect x="12" y="136" width="176" height="76" rx="0" fill="#fff" stroke="#888" stroke-width="1.2"/>
+<text x="20" y="152" font-size="12" text-anchor="start" font-weight="bold" fill="#222">1</text>
+<rect x="34" y="144" width="70" height="44" rx="0" fill="#f0f0f0" stroke="#aaa" stroke-width="1.2"/>
+<text x="112" y="158" font-size="11" text-anchor="start" font-weight="normal" fill="#222">Poll</text>
+<rect x="112" y="166" width="64" height="18" rx="9" fill="#e8f0ff" stroke="#557" stroke-width="1"/>
+<text x="144" y="179" font-size="10" text-anchor="middle" font-weight="normal" fill="#222">48 stored</text>
+<rect x="12" y="222" width="176" height="76" rx="0" fill="#fff" stroke="#222" stroke-width="2.5" stroke-dasharray="5 3"/>
+<text x="20" y="238" font-size="12" text-anchor="start" font-weight="bold" fill="#222">2</text>
+<rect x="34" y="230" width="70" height="44" rx="0" fill="#f0f0f0" stroke="#aaa" stroke-width="1.2"/>
+<text x="112" y="244" font-size="11" text-anchor="start" font-weight="normal" fill="#222">Poll</text>
+<rect x="112" y="252" width="64" height="18" rx="9" fill="#e8f0ff" stroke="#557" stroke-width="1"/>
+<text x="144" y="265" font-size="10" text-anchor="middle" font-weight="normal" fill="#222">Incomplete</text>
+<text x="20" y="290" font-size="10" text-anchor="start" font-weight="normal" fill="#666">missing: option D text</text>
+<rect x="12" y="308" width="176" height="76" rx="0" fill="#fff" stroke="#888" stroke-width="1.2"/>
+<text x="20" y="324" font-size="12" text-anchor="start" font-weight="bold" fill="#222">3</text>
+<rect x="34" y="316" width="70" height="44" rx="0" fill="#f0f0f0" stroke="#aaa" stroke-width="1.2"/>
+<text x="112" y="330" font-size="11" text-anchor="start" font-weight="normal" fill="#222">Content</text>
+<text x="20" y="376" font-size="10" text-anchor="start" font-weight="normal" fill="#666">hidden on phones</text>
+<rect x="16" y="716" width="168" height="30" rx="4" fill="#fff" stroke="#444" stroke-width="1.2"/>
+<text x="100.0" y="735.5" font-size="13" text-anchor="middle" font-weight="normal" fill="#222">+ Add slide</text>
+<rect x="200" y="104" width="660" height="420" rx="0" fill="#fff" stroke="#bbb" stroke-width="1.2"/>
+<text x="214" y="126" font-size="12" text-anchor="start" font-weight="normal" fill="#666">Poll  ·  slide 2  ·  Incomplete</text>
+<rect x="230" y="142" width="600" height="64" rx="0" fill="#fff" stroke="#444" stroke-width="1.2"/>
+<text x="242" y="168" font-size="16" text-anchor="start" font-weight="normal" fill="#222">What is your favourite tool?</text>
+<text x="818" y="198" font-size="11" text-anchor="end" font-weight="normal" fill="#666">27 / 300</text>
+<rect x="230" y="224" width="540" height="38" rx="0" fill="#fff" stroke="#444" stroke-width="1.2"/>
+<text x="242" y="248" font-size="13" text-anchor="start" font-weight="bold" fill="#222">A</text>
+<text x="274" y="248" font-size="14" text-anchor="start" font-weight="normal" fill="#222">Slides</text>
+<text x="752" y="248" font-size="13" text-anchor="end" font-weight="normal" fill="#666">✕</text>
+<rect x="230" y="274" width="540" height="38" rx="0" fill="#fff" stroke="#444" stroke-width="1.2"/>
+<text x="242" y="298" font-size="13" text-anchor="start" font-weight="bold" fill="#222">B</text>
+<text x="274" y="298" font-size="14" text-anchor="start" font-weight="normal" fill="#222">Quiz</text>
+<text x="752" y="298" font-size="13" text-anchor="end" font-weight="normal" fill="#666">✕</text>
+<rect x="230" y="324" width="540" height="38" rx="0" fill="#fff" stroke="#444" stroke-width="1.2"/>
+<text x="242" y="348" font-size="13" text-anchor="start" font-weight="bold" fill="#222">C</text>
+<text x="274" y="348" font-size="14" text-anchor="start" font-weight="normal" fill="#222">Whiteboard</text>
+<text x="752" y="348" font-size="13" text-anchor="end" font-weight="normal" fill="#666">✕</text>
+<rect x="230" y="374" width="540" height="38" rx="0" fill="#fff" stroke="#c00" stroke-width="1.8" stroke-dasharray="4 3"/>
+<text x="242" y="398" font-size="13" text-anchor="start" font-weight="bold" fill="#222">D</text>
+<text x="274" y="398" font-size="14" text-anchor="start" font-weight="normal" fill="#999">(empty)</text>
+<text x="752" y="398" font-size="13" text-anchor="end" font-weight="normal" fill="#666">✕</text>
+<text x="230" y="432" font-size="12" text-anchor="start" font-weight="normal" fill="#c00">Option text can't be empty.</text>
+<rect x="230" y="446" width="120" height="26" rx="4" fill="#fff" stroke="#444" stroke-width="1.2"/>
+<text x="290.0" y="463.5" font-size="13" text-anchor="middle" font-weight="normal" fill="#222">+ Add option</text>
+<text x="364" y="464" font-size="11" text-anchor="start" font-weight="normal" fill="#777">2 to 8 options</text>
+<rect x="200" y="524" width="660" height="236" rx="0" fill="#f7f7f7" stroke="#bbb" stroke-width="1.2"/>
+<text x="214" y="544" font-size="12" text-anchor="start" font-weight="bold" fill="#222">Preview  (nothing is stored)</text>
+<rect x="214" y="554" width="380" height="192" rx="0" fill="#fff" stroke="#666" stroke-width="1.2"/>
+<text x="404" y="576" font-size="11" text-anchor="middle" font-weight="normal" fill="#666">Projector view</text>
+<rect x="236" y="596" width="300" height="22" rx="0" fill="#cfd8e8" stroke="#889" stroke-width="1.2"/>
+<rect x="236" y="630" width="210" height="22" rx="0" fill="#cfd8e8" stroke="#889" stroke-width="1.2"/>
+<rect x="236" y="664" width="150" height="22" rx="0" fill="#cfd8e8" stroke="#889" stroke-width="1.2"/>
+<rect x="236" y="698" width="90" height="22" rx="0" fill="#cfd8e8" stroke="#889" stroke-width="1.2"/>
+<rect x="630" y="552" width="90" height="196" rx="10" fill="#fff" stroke="#444" stroke-width="1.5"/>
+<text x="675" y="572" font-size="10" text-anchor="middle" font-weight="normal" fill="#666">Participant</text>
+<rect x="640" y="584" width="70" height="24" rx="4" fill="#f3f3f3" stroke="#999" stroke-width="1"/>
+<rect x="640" y="618" width="70" height="24" rx="4" fill="#f3f3f3" stroke="#999" stroke-width="1"/>
+<rect x="640" y="652" width="70" height="24" rx="4" fill="#f3f3f3" stroke="#999" stroke-width="1"/>
+<rect x="640" y="686" width="70" height="24" rx="4" fill="#f3f3f3" stroke="#999" stroke-width="1"/>
+<rect x="734" y="562" width="114" height="28" rx="4" fill="#fff" stroke="#444" stroke-width="1.2"/>
+<text x="791.0" y="580.5" font-size="11" text-anchor="middle" font-weight="normal" fill="#222">Simulate responses</text>
+<rect x="860" y="104" width="420" height="656" rx="0" fill="#fafafa" stroke="#bbb" stroke-width="1.2"/>
+<text x="874" y="126" font-size="13" text-anchor="start" font-weight="bold" fill="#222">Inspector  ·  Poll</text>
+<text x="874" y="148" font-size="12" text-anchor="start" font-weight="normal" fill="#555">Response mode</text>
+<rect x="874" y="156" width="392" height="28" rx="0" fill="#fff" stroke="#444" stroke-width="1.2"/>
+<text x="884" y="175" font-size="13" text-anchor="start" font-weight="normal" fill="#222">Anonymous  ▾</text>
+<text x="874" y="206" font-size="12" text-anchor="start" font-weight="normal" fill="#555">Response rule</text>
+<rect x="874" y="214" width="392" height="28" rx="0" fill="#fff" stroke="#444" stroke-width="1.2"/>
+<text x="884" y="233" font-size="13" text-anchor="start" font-weight="normal" fill="#222">One per participant  ▾</text>
+<text x="874" y="264" font-size="12" text-anchor="start" font-weight="normal" fill="#555">Timer</text>
+<rect x="874" y="272" width="392" height="28" rx="0" fill="#fff" stroke="#444" stroke-width="1.2"/>
+<text x="884" y="291" font-size="13" text-anchor="start" font-weight="normal" fill="#222">None  ▾</text>
+<text x="874" y="322" font-size="12" text-anchor="start" font-weight="normal" fill="#555">Close policy</text>
+<rect x="874" y="330" width="392" height="28" rx="0" fill="#fff" stroke="#444" stroke-width="1.2"/>
+<text x="884" y="349" font-size="13" text-anchor="start" font-weight="normal" fill="#222">Immediate  ▾</text>
+<text x="874" y="380" font-size="12" text-anchor="start" font-weight="normal" fill="#555">Results on projector</text>
+<rect x="874" y="388" width="392" height="28" rx="0" fill="#fff" stroke="#444" stroke-width="1.2"/>
+<text x="884" y="407" font-size="13" text-anchor="start" font-weight="normal" fill="#222">Live  ▾</text>
+<text x="874" y="438" font-size="12" text-anchor="start" font-weight="normal" fill="#555">Show on participant devices</text>
+<rect x="874" y="446" width="20" height="20" rx="0" fill="#fff" stroke="#444" stroke-width="1.2"/>
+<text x="878" y="462" font-size="14" text-anchor="start" font-weight="bold" fill="#222">✓</text>
+<text x="874" y="498" font-size="12" text-anchor="start" font-weight="normal" fill="#555">Speaker notes</text>
+<rect x="874" y="506" width="392" height="70" rx="0" fill="#fff" stroke="#444" stroke-width="1.2"/>
+<text x="874" y="598" font-size="10" text-anchor="start" font-weight="normal" fill="#777">Example, shown instead of the fields above when a slide has stored responses:</text>
+<rect x="874" y="606" width="392" height="52" rx="4" fill="#fff4cc" stroke="#8a6d00" stroke-width="1.2"/>
+<text x="886" y="628" font-size="12" text-anchor="start" font-weight="normal" fill="#222">[locked]  Slide has 48 stored responses.</text>
+<text x="886" y="646" font-size="12" text-anchor="start" font-weight="normal" fill="#222">Reset this slide's data to edit these fields.</text>
+<rect x="0" y="760" width="1280" height="40" rx="0" fill="#e6e6e6" stroke="#bbb" stroke-width="1.2"/>
+<text x="14" y="785" font-size="12" text-anchor="start" font-weight="normal" fill="#444">Idle   |   Network: not active   |   Slide 2 of 3  (Incomplete)</text>
+<circle cx="1262" cy="14" r="11" fill="#ffd84d" stroke="#8a6d00" stroke-width="1.5"/>
+<text x="1262" y="18" font-size="12" text-anchor="middle" font-weight="bold" fill="#222">1</text>
+<circle cx="1250" cy="82" r="11" fill="#ffd84d" stroke="#8a6d00" stroke-width="1.5"/>
+<text x="1250" y="86" font-size="12" text-anchor="middle" font-weight="bold" fill="#222">2</text>
+<circle cx="186" cy="118" r="11" fill="#ffd84d" stroke="#8a6d00" stroke-width="1.5"/>
+<text x="186" y="122" font-size="12" text-anchor="middle" font-weight="bold" fill="#222">3</text>
+<circle cx="846" cy="118" r="11" fill="#ffd84d" stroke="#8a6d00" stroke-width="1.5"/>
+<text x="846" y="122" font-size="12" text-anchor="middle" font-weight="bold" fill="#222">4</text>
+<circle cx="846" cy="536" r="11" fill="#ffd84d" stroke="#8a6d00" stroke-width="1.5"/>
+<text x="846" y="540" font-size="12" text-anchor="middle" font-weight="bold" fill="#222">5</text>
+<circle cx="1262" cy="118" r="11" fill="#ffd84d" stroke="#8a6d00" stroke-width="1.5"/>
+<text x="1262" y="122" font-size="12" text-anchor="middle" font-weight="bold" fill="#222">6</text>
+<circle cx="1262" cy="780" r="11" fill="#ffd84d" stroke="#8a6d00" stroke-width="1.5"/>
+<text x="1262" y="784" font-size="12" text-anchor="middle" font-weight="bold" fill="#222">7</text>
+</svg>

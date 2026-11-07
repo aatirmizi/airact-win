@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:actvty:schema:slide",
+  "title": "Slide envelope (slides/<id>.json)",
+  "description": "Generic wrapper for any slide. The content object is validated by the slide type's own schema, so adding a Slide Type does not change this file's schema.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "type_id",
+    "type_version",
+    "content",
+    "settings"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]{12}$",
+      "description": "Random slide identifier (12 lowercase letters or digits)."
+    },
+    "type_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.]{1,39}$",
+      "description": "Slide type identifier."
+    },
+    "type_version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Version of the slide type's schema used by this slide."
+    },
+    "content": {
+      "type": "object",
+      "description": "Type-specific authored content, validated against the component schema."
+    },
+    "settings": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Common slide settings. A component's manifest declares which apply and their defaults.",
+      "properties": {
+        "response_mode": {
+          "enum": [
+            "anonymous",
+            "identified"
+          ]
+        },
+        "response_rule": {
+          "enum": [
+            "one_per_participant",
+            "replace_until_closed",
+            "multiple"
+          ]
+        },
+        "close_policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode"
+          ],
+          "properties": {
+            "mode": {
+              "enum": [
+                "immediate",
+                "grace"
+              ]
+            },
+            "grace_seconds": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10
+            }
+          },
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "grace"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "grace_seconds"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "grace_seconds"
+              ]
+            }
+          }
+        },
+        "participant_visibility": {
+          "type": "boolean",
+          "description": "Show on participant devices."
+        },
+        "results_visibility": {
+          "enum": [
+            "live",
+            "hidden"
+          ]
+        },
+        "timer_seconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 5,
+          "maximum": 3600
+        }
+      }
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 5000,
+      "x-limit": "LIM-SLIDE-NOTES-MAX-CHARS",
+      "default": "",
+      "description": "Speaker notes."
+    }
+  }
+}

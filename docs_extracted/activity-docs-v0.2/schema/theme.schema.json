@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:actvty:schema:theme",
+  "title": "Theme (theme.json)",
+  "description": "Colours and fonts for the whole Activity. Contrast is checked by the application (warning), not by this schema.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "name",
+    "palette",
+    "fonts"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60
+    },
+    "palette": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "background",
+        "surface",
+        "text",
+        "accent",
+        "positive",
+        "negative"
+      ],
+      "properties": {
+        "background": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "surface": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "text": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "accent": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "positive": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "negative": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        }
+      }
+    },
+    "fonts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "heading",
+        "body"
+      ],
+      "properties": {
+        "heading": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]{2,40}$",
+          "description": "Identifier of a bundled font."
+        },
+        "body": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]{2,40}$",
+          "description": "Identifier of a bundled font."
+        }
+      }
+    }
+  }
+}

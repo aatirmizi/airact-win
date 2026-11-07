@@ -1,0 +1,666 @@
+{
+  "registry_version": 1,
+  "note": "Canonical limits registry. Values marked initial are starting points to be tuned by measurement; changing a value is a schema-governance change (see SCHEMA_GOVERNANCE.md). Code reads this file; documents quote the generated tables in reference/limits.md.",
+  "limits": [
+    {
+      "id": "LIM-FILE-MAX-BYTES",
+      "name": "Maximum Activity file size",
+      "value": 1073741824,
+      "unit": "bytes",
+      "status": "initial",
+      "category": "file",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 5",
+      "description": "Files larger than this are refused before unpacking."
+    },
+    {
+      "id": "LIM-FILE-MAX-ENTRIES",
+      "name": "Maximum archive entries",
+      "value": 5000,
+      "unit": "entries",
+      "status": "initial",
+      "category": "file",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 5",
+      "description": "Archives with more entries are refused."
+    },
+    {
+      "id": "LIM-FILE-MAX-MEDIA-BYTES",
+      "name": "Maximum size of one media file",
+      "value": 52428800,
+      "unit": "bytes",
+      "status": "initial",
+      "category": "file",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 5",
+      "description": "Enforced while reading, not only from declared sizes."
+    },
+    {
+      "id": "LIM-FILE-MAX-MEDIA-COUNT",
+      "name": "Maximum number of media files",
+      "value": 1000,
+      "unit": "files",
+      "status": "initial",
+      "category": "file",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 5",
+      "description": "Limits the media index."
+    },
+    {
+      "id": "LIM-FILE-MAX-JSON-BYTES",
+      "name": "Maximum size of one JSON entry (other than a slide)",
+      "value": 4194304,
+      "unit": "bytes",
+      "status": "initial",
+      "category": "file",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 5",
+      "description": "Applies to manifest, theme, settings and roster files."
+    },
+    {
+      "id": "LIM-FILE-MAX-UNCOMPRESSED-BYTES",
+      "name": "Maximum total uncompressed size",
+      "value": 1073741824,
+      "unit": "bytes",
+      "status": "initial",
+      "category": "file",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 5",
+      "description": "Guards against decompression bombs."
+    },
+    {
+      "id": "LIM-FILE-MAX-COMPRESSION-RATIO",
+      "name": "Maximum compression ratio per entry",
+      "value": 100,
+      "unit": "ratio",
+      "status": "initial",
+      "category": "file",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 5",
+      "description": "Entries compressing better than this are refused."
+    },
+    {
+      "id": "LIM-SLIDE-MAX-BYTES",
+      "name": "Maximum size of one slide file",
+      "value": 262144,
+      "unit": "bytes",
+      "status": "initial",
+      "category": "file",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 5",
+      "description": "Applies to each slides/<id>.json entry."
+    },
+    {
+      "id": "LIM-ACTIVITY-MAX-SLIDES",
+      "name": "Maximum slides per Activity",
+      "value": 500,
+      "unit": "slides",
+      "status": "initial",
+      "category": "file",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 2",
+      "description": "Limits the manifest slide list."
+    },
+    {
+      "id": "LIM-ACTIVITY-NAME-MAX-CHARS",
+      "name": "Maximum Activity name length",
+      "value": 120,
+      "unit": "characters",
+      "status": "initial",
+      "category": "file",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 2",
+      "description": "Name shown in tabs and reports."
+    },
+    {
+      "id": "LIM-SLIDE-NOTES-MAX-CHARS",
+      "name": "Maximum speaker notes length",
+      "value": 5000,
+      "unit": "characters",
+      "status": "initial",
+      "category": "content",
+      "explained_in": "PRODUCT_SPEC.md section 3",
+      "description": "Per slide."
+    },
+    {
+      "id": "LIM-CONTENT-QUESTION-MAX-CHARS",
+      "name": "Maximum question length",
+      "value": 300,
+      "unit": "characters",
+      "status": "initial",
+      "category": "content",
+      "explained_in": "PRODUCT_SPEC.md section 3",
+      "description": "Poll, Quiz Question and Q&A question text."
+    },
+    {
+      "id": "LIM-CONTENT-OPTION-MAX-CHARS",
+      "name": "Maximum answer option length",
+      "value": 100,
+      "unit": "characters",
+      "status": "initial",
+      "category": "content",
+      "explained_in": "PRODUCT_SPEC.md section 3",
+      "description": "Poll and Quiz Question options."
+    },
+    {
+      "id": "LIM-CONTENT-EXPLANATION-MAX-CHARS",
+      "name": "Maximum explanation length",
+      "value": 500,
+      "unit": "characters",
+      "status": "initial",
+      "category": "content",
+      "explained_in": "PRODUCT_SPEC.md section 5",
+      "description": "Quiz Question explanation."
+    },
+    {
+      "id": "LIM-CONTENT-POLL-OPTIONS-MIN",
+      "name": "Minimum Poll options",
+      "value": 2,
+      "unit": "options",
+      "status": "fixed",
+      "category": "content",
+      "explained_in": "PRODUCT_SPEC.md section 3",
+      "description": "A Poll needs at least two options."
+    },
+    {
+      "id": "LIM-CONTENT-POLL-OPTIONS-MAX",
+      "name": "Maximum Poll options",
+      "value": 8,
+      "unit": "options",
+      "status": "initial",
+      "category": "content",
+      "explained_in": "PRODUCT_SPEC.md section 3",
+      "description": "Fits a phone screen without scrolling in the planned design."
+    },
+    {
+      "id": "LIM-CONTENT-QUIZ-OPTIONS-MIN",
+      "name": "Minimum Quiz Question options",
+      "value": 2,
+      "unit": "options",
+      "status": "fixed",
+      "category": "content",
+      "explained_in": "PRODUCT_SPEC.md section 3",
+      "description": "A Quiz Question needs at least two options."
+    },
+    {
+      "id": "LIM-CONTENT-QUIZ-OPTIONS-MAX",
+      "name": "Maximum Quiz Question options",
+      "value": 6,
+      "unit": "options",
+      "status": "initial",
+      "category": "content",
+      "explained_in": "PRODUCT_SPEC.md section 3",
+      "description": "Fits a phone screen without scrolling in the planned design."
+    },
+    {
+      "id": "LIM-CONTENT-OPEN-ANSWER-DEFAULT-CHARS",
+      "name": "Default Open Question answer length",
+      "value": 500,
+      "unit": "characters",
+      "status": "initial",
+      "category": "content",
+      "explained_in": "PRODUCT_SPEC.md section 3",
+      "description": "Configurable per slide up to the maximum."
+    },
+    {
+      "id": "LIM-CONTENT-OPEN-ANSWER-MAX-CHARS",
+      "name": "Maximum Open Question answer length",
+      "value": 2000,
+      "unit": "characters",
+      "status": "initial",
+      "category": "content",
+      "explained_in": "PRODUCT_SPEC.md section 3",
+      "description": "Upper bound of the per-slide setting."
+    },
+    {
+      "id": "LIM-CONTENT-WORD-MAX-CHARS",
+      "name": "Maximum Word Cloud entry length",
+      "value": 40,
+      "unit": "characters",
+      "status": "initial",
+      "category": "content",
+      "explained_in": "PRODUCT_SPEC.md section 3",
+      "description": "Short entries aggregate better."
+    },
+    {
+      "id": "LIM-CONTENT-QA-QUESTION-MAX-CHARS",
+      "name": "Maximum Q&A question length",
+      "value": 300,
+      "unit": "characters",
+      "status": "initial",
+      "category": "content",
+      "explained_in": "PRODUCT_SPEC.md section 3",
+      "description": "Participant-submitted question."
+    },
+    {
+      "id": "LIM-CONTENT-POINTS-DEFAULT",
+      "name": "Default points per Quiz Question",
+      "value": 100,
+      "unit": "points",
+      "status": "initial",
+      "category": "content",
+      "explained_in": "PRODUCT_SPEC.md section 5",
+      "description": "Default for a new Quiz Question."
+    },
+    {
+      "id": "LIM-CONTENT-POINTS-MAX",
+      "name": "Maximum points per Quiz Question",
+      "value": 1000,
+      "unit": "points",
+      "status": "initial",
+      "category": "content",
+      "explained_in": "PRODUCT_SPEC.md section 5",
+      "description": "Upper bound of the per-slide setting."
+    },
+    {
+      "id": "LIM-CONTENT-TIMER-MIN-S",
+      "name": "Minimum slide timer",
+      "value": 5,
+      "unit": "seconds",
+      "status": "initial",
+      "category": "content",
+      "explained_in": "PRODUCT_SPEC.md section 5",
+      "description": "Shorter timers are not offered."
+    },
+    {
+      "id": "LIM-CONTENT-TIMER-MAX-S",
+      "name": "Maximum slide timer",
+      "value": 3600,
+      "unit": "seconds",
+      "status": "initial",
+      "category": "content",
+      "explained_in": "PRODUCT_SPEC.md section 5",
+      "description": "Longer timers are not offered."
+    },
+    {
+      "id": "LIM-ID-DISPLAY-NAME-MAX-CHARS",
+      "name": "Maximum display name length",
+      "value": 40,
+      "unit": "characters",
+      "status": "initial",
+      "category": "identity",
+      "explained_in": "PRODUCT_SPEC.md section 11",
+      "description": "Measured after normalisation."
+    },
+    {
+      "id": "LIM-ID-USER-ID-MAX-CHARS",
+      "name": "Maximum Participant ID length",
+      "value": 64,
+      "unit": "characters",
+      "status": "initial",
+      "category": "identity",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 9",
+      "description": "Roster user_id."
+    },
+    {
+      "id": "LIM-ID-PIN-MAX-CHARS",
+      "name": "Maximum PIN input length",
+      "value": 32,
+      "unit": "characters",
+      "status": "initial",
+      "category": "identity",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 9",
+      "description": "Bounds login input."
+    },
+    {
+      "id": "LIM-ID-PIN-CUSTOM-MIN-CHARS",
+      "name": "Minimum custom PIN length",
+      "value": 6,
+      "unit": "characters",
+      "status": "initial",
+      "category": "identity",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 9",
+      "description": "For Facilitator-set PINs."
+    },
+    {
+      "id": "LIM-ID-JOIN-CODE-CHARS",
+      "name": "Join code length",
+      "value": 4,
+      "unit": "characters",
+      "status": "initial",
+      "category": "identity",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 10",
+      "description": "Alphabet without look-alike characters."
+    },
+    {
+      "id": "LIM-ID-NAME-CHANGES-PER-MINUTE",
+      "name": "Display name changes allowed per minute",
+      "value": 3,
+      "unit": "changes",
+      "status": "initial",
+      "category": "identity",
+      "explained_in": "PRODUCT_SPEC.md section 11",
+      "description": "Per participant."
+    },
+    {
+      "id": "LIM-ID-ROSTER-MAX-ROWS",
+      "name": "Maximum roster rows",
+      "value": 1000,
+      "unit": "rows",
+      "status": "initial",
+      "category": "identity",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 9",
+      "description": "Per Activity."
+    },
+    {
+      "id": "LIM-NET-WS-MESSAGE-MAX-BYTES",
+      "name": "Maximum WebSocket message size",
+      "value": 8192,
+      "unit": "bytes",
+      "status": "initial",
+      "category": "network",
+      "explained_in": "PROTOCOL_SPEC.md section 8",
+      "description": "Larger messages close the connection."
+    },
+    {
+      "id": "LIM-NET-SUBMISSION-BODY-MAX-BYTES",
+      "name": "Maximum submission request body",
+      "value": 16384,
+      "unit": "bytes",
+      "status": "initial",
+      "category": "network",
+      "explained_in": "PROTOCOL_SPEC.md section 8",
+      "description": "Larger bodies are refused with too_large."
+    },
+    {
+      "id": "LIM-NET-PARTICIPANT-VIEW-BUDGET-BYTES",
+      "name": "Participant view size budget",
+      "value": 4096,
+      "unit": "bytes",
+      "status": "initial",
+      "category": "network",
+      "explained_in": "PROTOCOL_SPEC.md section 8",
+      "description": "Typical size target for a participant view message."
+    },
+    {
+      "id": "LIM-NET-PARTICIPANT-VIEW-MAX-BYTES",
+      "name": "Participant view hard cap",
+      "value": 16384,
+      "unit": "bytes",
+      "status": "initial",
+      "category": "network",
+      "explained_in": "PROTOCOL_SPEC.md section 8",
+      "description": "A larger view is a defect and is never sent."
+    },
+    {
+      "id": "LIM-NET-CONNECTIONS-PER-ADDRESS",
+      "name": "Maximum connections per client address",
+      "value": 20,
+      "unit": "connections",
+      "status": "initial",
+      "category": "network",
+      "explained_in": "PROTOCOL_SPEC.md section 8",
+      "description": "Participant listener."
+    },
+    {
+      "id": "LIM-NET-SUBMISSIONS-PER-SECOND",
+      "name": "Maximum submissions per participant per second",
+      "value": 5,
+      "unit": "submissions",
+      "status": "initial",
+      "category": "network",
+      "explained_in": "PROTOCOL_SPEC.md section 8",
+      "description": "Excess is refused with rate_limited."
+    },
+    {
+      "id": "LIM-NET-JOINS-PER-ADDRESS-PER-MINUTE",
+      "name": "Maximum join attempts per address per minute",
+      "value": 30,
+      "unit": "attempts",
+      "status": "initial",
+      "category": "network",
+      "explained_in": "PROTOCOL_SPEC.md section 8",
+      "description": "Excess is refused with rate_limited."
+    },
+    {
+      "id": "LIM-NET-SEND-QUEUE-MESSAGES",
+      "name": "Send queue length per connection",
+      "value": 64,
+      "unit": "messages",
+      "status": "initial",
+      "category": "network",
+      "explained_in": "ARCHITECTURE.md section 7",
+      "description": "Overflow closes the connection."
+    },
+    {
+      "id": "LIM-NET-VIEW-BUILD-CONCURRENCY",
+      "name": "Concurrent view builds",
+      "value": 16,
+      "unit": "builds",
+      "status": "initial",
+      "category": "network",
+      "explained_in": "ARCHITECTURE.md section 7",
+      "description": "Further builds queue."
+    },
+    {
+      "id": "LIM-NET-RESULT-COALESCE-MS",
+      "name": "Result update coalescing interval",
+      "value": 250,
+      "unit": "milliseconds",
+      "status": "initial",
+      "category": "network",
+      "explained_in": "ARCHITECTURE.md section 7",
+      "description": "About four updates per second."
+    },
+    {
+      "id": "LIM-NET-PING-INTERVAL-MS",
+      "name": "Server ping interval",
+      "value": 5000,
+      "unit": "milliseconds",
+      "status": "initial",
+      "category": "network",
+      "explained_in": "ARCHITECTURE.md section 7",
+      "description": "WebSocket ping frames."
+    },
+    {
+      "id": "LIM-NET-PONG-TIMEOUT-MS",
+      "name": "Pong timeout before a participant is inactive",
+      "value": 15000,
+      "unit": "milliseconds",
+      "status": "initial",
+      "category": "network",
+      "explained_in": "ARCHITECTURE.md section 7",
+      "description": "Defines Active."
+    },
+    {
+      "id": "LIM-NET-RECONNECT-BASE-MS",
+      "name": "Reconnect backoff base",
+      "value": 500,
+      "unit": "milliseconds",
+      "status": "initial",
+      "category": "network",
+      "explained_in": "PROTOCOL_SPEC.md section 6",
+      "description": "Full jitter applied."
+    },
+    {
+      "id": "LIM-NET-RECONNECT-MAX-MS",
+      "name": "Reconnect backoff ceiling",
+      "value": 5000,
+      "unit": "milliseconds",
+      "status": "initial",
+      "category": "network",
+      "explained_in": "PROTOCOL_SPEC.md section 6",
+      "description": "Upper bound of the delay."
+    },
+    {
+      "id": "LIM-NET-VISIBILITY-JITTER-MS",
+      "name": "Maximum jitter on visibility-triggered reconnect",
+      "value": 500,
+      "unit": "milliseconds",
+      "status": "initial",
+      "category": "network",
+      "explained_in": "PROTOCOL_SPEC.md section 6",
+      "description": "Applied when a phone is unlocked."
+    },
+    {
+      "id": "LIM-NET-SUBMIT-TIMEOUT-MS",
+      "name": "Client wait before a submission is treated as uncertain",
+      "value": 8000,
+      "unit": "milliseconds",
+      "status": "initial",
+      "category": "network",
+      "explained_in": "PROTOCOL_SPEC.md section 5",
+      "description": "Then the same submission ID is retried."
+    },
+    {
+      "id": "LIM-NET-GROUP-COMMIT-MS",
+      "name": "Group commit window",
+      "value": 20,
+      "unit": "milliseconds",
+      "status": "initial",
+      "category": "network",
+      "explained_in": "ARCHITECTURE.md section 8",
+      "description": "Submissions committed together."
+    },
+    {
+      "id": "LIM-NET-GROUP-COMMIT-MAX",
+      "name": "Maximum submissions per group commit",
+      "value": 100,
+      "unit": "submissions",
+      "status": "initial",
+      "category": "network",
+      "explained_in": "ARCHITECTURE.md section 8",
+      "description": "Whichever limit is reached first."
+    },
+    {
+      "id": "LIM-AUTH-PROJECTOR-TOKEN-TTL-S",
+      "name": "Projector link token lifetime",
+      "value": 60,
+      "unit": "seconds",
+      "status": "initial",
+      "category": "auth",
+      "explained_in": "ARCHITECTURE.md section 3",
+      "description": "One use only."
+    },
+    {
+      "id": "LIM-AUTH-PARTICIPANT-TOKEN-DAYS",
+      "name": "Participant token lifetime",
+      "value": 7,
+      "unit": "days",
+      "status": "initial",
+      "category": "auth",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 10",
+      "description": "So re-presenting recognises the same browser."
+    },
+    {
+      "id": "LIM-AUTH-NONCE-TTL-S",
+      "name": "Login challenge lifetime",
+      "value": 60,
+      "unit": "seconds",
+      "status": "initial",
+      "category": "auth",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 9",
+      "description": "Single use."
+    },
+    {
+      "id": "LIM-AUTH-LOCKOUT-THRESHOLD",
+      "name": "Failed logins before lockout",
+      "value": 5,
+      "unit": "attempts",
+      "status": "initial",
+      "category": "auth",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 9",
+      "description": "Per ID string, within the window."
+    },
+    {
+      "id": "LIM-AUTH-LOCKOUT-WINDOW-MIN",
+      "name": "Lockout counting window",
+      "value": 10,
+      "unit": "minutes",
+      "status": "initial",
+      "category": "auth",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 9",
+      "description": "Failures older than this are forgotten."
+    },
+    {
+      "id": "LIM-AUTH-LOCKOUT-FIRST-S",
+      "name": "First lockout duration",
+      "value": 60,
+      "unit": "seconds",
+      "status": "initial",
+      "category": "auth",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 9",
+      "description": "Doubles on repeat."
+    },
+    {
+      "id": "LIM-AUTH-LOCKOUT-MAX-MIN",
+      "name": "Maximum lockout duration",
+      "value": 15,
+      "unit": "minutes",
+      "status": "initial",
+      "category": "auth",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 9",
+      "description": "Upper bound of the doubling."
+    },
+    {
+      "id": "LIM-AUTH-DEVICE-FAILURES",
+      "name": "Failed logins per device per window",
+      "value": 10,
+      "unit": "attempts",
+      "status": "initial",
+      "category": "auth",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 9",
+      "description": "Per participant token or address."
+    },
+    {
+      "id": "LIM-PRES-DEFAULT-PARTICIPANT-LIMIT",
+      "name": "Default participant limit until capacity is validated",
+      "value": 30,
+      "unit": "participants",
+      "status": "initial",
+      "category": "presenting",
+      "explained_in": "PRODUCT_SPEC.md section 6",
+      "description": "Replaced by a measured value after validation."
+    },
+    {
+      "id": "LIM-PRES-GRACE-MIN-S",
+      "name": "Minimum grace period",
+      "value": 1,
+      "unit": "seconds",
+      "status": "fixed",
+      "category": "presenting",
+      "explained_in": "PRODUCT_SPEC.md section 7",
+      "description": "Lower bound of the setting."
+    },
+    {
+      "id": "LIM-PRES-GRACE-MAX-S",
+      "name": "Maximum grace period",
+      "value": 10,
+      "unit": "seconds",
+      "status": "initial",
+      "category": "presenting",
+      "explained_in": "PRODUCT_SPEC.md section 7",
+      "description": "Upper bound of the setting."
+    },
+    {
+      "id": "LIM-OPS-SAFETY-COPIES-KEPT",
+      "name": "Safety copies kept",
+      "value": 3,
+      "unit": "copies",
+      "status": "initial",
+      "category": "files",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 8",
+      "description": "The newest are kept."
+    },
+    {
+      "id": "LIM-OPS-LOCK-REFRESH-S",
+      "name": "Lock file refresh interval",
+      "value": 30,
+      "unit": "seconds",
+      "status": "initial",
+      "category": "files",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 12",
+      "description": "Diagnostic only."
+    },
+    {
+      "id": "LIM-OPS-JOURNAL-DEBOUNCE-S",
+      "name": "Autosave journal delay after an edit",
+      "value": 5,
+      "unit": "seconds",
+      "status": "initial",
+      "category": "files",
+      "explained_in": "SECURITY_FILE_FORMAT.md section 4",
+      "description": "Recovery journal, not Save."
+    },
+    {
+      "id": "LIM-OPS-RECENT-FILES",
+      "name": "Recent files remembered",
+      "value": 10,
+      "unit": "files",
+      "status": "initial",
+      "category": "files",
+      "explained_in": "PRODUCT_SPEC.md section 2",
+      "description": "Open Recent list."
+    }
+  ]
+}

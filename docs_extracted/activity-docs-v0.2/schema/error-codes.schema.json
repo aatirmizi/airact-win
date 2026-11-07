@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:actvty:schema:error-codes",
+  "title": "Error-code catalogue",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "catalogue_version",
+    "naming",
+    "errors"
+  ],
+  "properties": {
+    "catalogue_version": {
+      "type": "integer"
+    },
+    "naming": {
+      "type": "string"
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "family",
+          "http_status",
+          "retry",
+          "message_key",
+          "facilitator_alert",
+          "stage",
+          "description",
+          "acceptance"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^([A-Z][A-Z0-9_]+|[a-z][a-z0-9_]+)$"
+          },
+          "family": {
+            "enum": [
+              "file",
+              "app",
+              "protocol"
+            ]
+          },
+          "http_status": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "retry": {
+            "enum": [
+              "never",
+              "after_delay",
+              "after_reconnect",
+              "user_action"
+            ]
+          },
+          "message_key": {
+            "type": "string"
+          },
+          "facilitator_alert": {
+            "type": "boolean"
+          },
+          "stage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 8
+          },
+          "description": {
+            "type": "string"
+          },
+          "acceptance": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^AT-[A-Z]+-\\d{3}$"
+            },
+            "minItems": 1
+          }
+        }
+      }
+    }
+  }
+}

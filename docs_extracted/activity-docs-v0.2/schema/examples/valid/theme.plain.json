@@ -1,0 +1,15 @@
+{
+  "name": "Plain",
+  "palette": {
+    "background": "#FFFFFF",
+    "surface": "#F2F2F2",
+    "text": "#111111",
+    "accent": "#1F4E9C",
+    "positive": "#1B7F3B",
+    "negative": "#B3261E"
+  },
+  "fonts": {
+    "heading": "system-sans",
+    "body": "system-sans"
+  }
+}

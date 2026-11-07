@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  color-scheme: light;
+}
+
+html.dark, [data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* Ensure smooth transitions for theme switching and default typography */
+html, body {
+  min-height: 100%;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Horizontal scrollbar styling for presenter screen on smaller viewports */
+.presenter-scroll-container {
+  scrollbar-width: thin;
+  scrollbar-color: #94a3b8 #f1f5f9;
+}
+
+.dark .presenter-scroll-container {
+  scrollbar-color: #475569 #0f172a;
+}
+
+.presenter-scroll-container::-webkit-scrollbar {
+  height: 9px;
+  width: 9px;
+}
+
+.presenter-scroll-container::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.dark .presenter-scroll-container::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+.presenter-scroll-container::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 9999px;
+  border: 2px solid #f1f5f9;
+}
+
+.presenter-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+.dark .presenter-scroll-container::-webkit-scrollbar-thumb {
+  background: #475569;
+  border: 2px solid #0f172a;
+}
+
+.dark .presenter-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}

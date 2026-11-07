@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-labelledby="t d" font-family="DejaVu Sans, Arial, Helvetica, sans-serif">
+<title id="t">Projector view sketch: Poll question</title>
+<desc id="d">Low-fidelity layout of the Projector view for a Poll question: large question, result bars, join address and QR code, timer and counters.</desc>
+<rect width="1280" height="720" fill="#ffffff"/>
+<rect x="0" y="0" width="1280" height="720" rx="0" fill="#ffffff" stroke="#222" stroke-width="3"/>
+<text x="60" y="100" font-size="44" text-anchor="start" font-weight="bold" fill="#222">What is your favourite tool?</text>
+<text x="1220" y="100" font-size="40" text-anchor="end" font-weight="bold" fill="#222">0:42</text>
+<text x="60" y="202" font-size="30" text-anchor="start" font-weight="bold" fill="#222">A   Slides</text>
+<rect x="60" y="214" width="680.0" height="36" rx="0" fill="#9db4d9" stroke="#223" stroke-width="1.5"/>
+<text x="754.0" y="242" font-size="28" text-anchor="start" font-weight="bold" fill="#222">46%</text>
+<text x="60" y="307" font-size="30" text-anchor="start" font-weight="bold" fill="#222">B   Quiz</text>
+<rect x="60" y="319" width="443.4782608695652" height="36" rx="0" fill="#9db4d9" stroke="#223" stroke-width="1.5"/>
+<text x="517.4782608695652" y="347" font-size="28" text-anchor="start" font-weight="bold" fill="#222">30%</text>
+<text x="60" y="412" font-size="30" text-anchor="start" font-weight="bold" fill="#222">C   Whiteboard</text>
+<rect x="60" y="424" width="236.52173913043478" height="36" rx="0" fill="#9db4d9" stroke="#223" stroke-width="1.5"/>
+<text x="310.52173913043475" y="452" font-size="28" text-anchor="start" font-weight="bold" fill="#222">16%</text>
+<text x="60" y="517" font-size="30" text-anchor="start" font-weight="bold" fill="#222">D   Other</text>
+<rect x="60" y="529" width="118.26086956521739" height="36" rx="0" fill="#9db4d9" stroke="#223" stroke-width="1.5"/>
+<text x="192.26086956521738" y="557" font-size="28" text-anchor="start" font-weight="bold" fill="#222">8%</text>
+<rect x="930" y="170" width="290" height="290" rx="0" fill="#f2f2f2" stroke="#222" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="1075" y="320" font-size="24" text-anchor="middle" font-weight="normal" fill="#555">QR code</text>
+<text x="930" y="500" font-size="24" text-anchor="start" font-weight="normal" fill="#333">Join at</text>
+<text x="930" y="534" font-size="22" text-anchor="start" font-weight="bold" fill="#222">http://192.168.1.23:</text>
+<text x="930" y="562" font-size="28" text-anchor="start" font-weight="bold" fill="#222">47831/j/K7M2</text>
+<rect x="0" y="650" width="1280" height="70" rx="0" fill="#eeeeee" stroke="#222" stroke-width="1.5"/>
+<text x="60" y="696" font-size="28" text-anchor="start" font-weight="bold" fill="#222">Active 31</text>
+<text x="420" y="696" font-size="28" text-anchor="start" font-weight="bold" fill="#222">Answered 28 / 31 active</text>
+<text x="1220" y="696" font-size="22" text-anchor="end" font-weight="normal" fill="#333">48 responses stored</text>
+<circle cx="30" cy="30" r="11" fill="#ffd84d" stroke="#8a6d00" stroke-width="1.5"/>
+<text x="30" y="34" font-size="12" text-anchor="middle" font-weight="bold" fill="#222">1</text>
+<circle cx="1250" cy="40" r="11" fill="#ffd84d" stroke="#8a6d00" stroke-width="1.5"/>
+<text x="1250" y="44" font-size="12" text-anchor="middle" font-weight="bold" fill="#222">2</text>
+<circle cx="40" cy="190" r="11" fill="#ffd84d" stroke="#8a6d00" stroke-width="1.5"/>
+<text x="40" y="194" font-size="12" text-anchor="middle" font-weight="bold" fill="#222">3</text>
+<circle cx="910" cy="184" r="11" fill="#ffd84d" stroke="#8a6d00" stroke-width="1.5"/>
+<text x="910" y="188" font-size="12" text-anchor="middle" font-weight="bold" fill="#222">4</text>
+<circle cx="1250" cy="684" r="11" fill="#ffd84d" stroke="#8a6d00" stroke-width="1.5"/>
+<text x="1250" y="688" font-size="12" text-anchor="middle" font-weight="bold" fill="#222">5</text>
+</svg>

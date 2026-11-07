@@ -1,0 +1,357 @@
+{
+  "catalogue_version": 1,
+  "rules": [
+    {
+      "id": "VAL-C-001",
+      "scope": "container",
+      "severity": "error",
+      "rule": "The file is a readable ZIP archive.",
+      "error_code": "FILE_INVALID_CONTAINER",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-029"
+      ]
+    },
+    {
+      "id": "VAL-C-002",
+      "scope": "container",
+      "severity": "error",
+      "rule": "Every entry name is one of: manifest.json, theme.json, settings.json, roster.json, data.db, slides/<id>.json, media/<id>.<ext>. Nothing else is allowed.",
+      "error_code": "FILE_INVALID_CONTAINER",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-024"
+      ]
+    },
+    {
+      "id": "VAL-C-003",
+      "scope": "container",
+      "severity": "error",
+      "rule": "No entry name is absolute, contains '..', a backslash, a drive letter or a NUL character, and no entry is a symbolic link.",
+      "error_code": "FILE_INVALID_CONTAINER",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-007"
+      ]
+    },
+    {
+      "id": "VAL-C-004",
+      "scope": "container",
+      "severity": "error",
+      "rule": "No two entry names are equal when compared case-insensitively.",
+      "error_code": "FILE_INVALID_CONTAINER",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-024"
+      ]
+    },
+    {
+      "id": "VAL-C-005",
+      "scope": "container",
+      "severity": "error",
+      "rule": "The file size does not exceed LIM-FILE-MAX-BYTES.",
+      "error_code": "FILE_TOO_LARGE",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-017"
+      ]
+    },
+    {
+      "id": "VAL-C-006",
+      "scope": "container",
+      "severity": "error",
+      "rule": "The entry count does not exceed LIM-FILE-MAX-ENTRIES.",
+      "error_code": "FILE_TOO_LARGE",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-017"
+      ]
+    },
+    {
+      "id": "VAL-C-007",
+      "scope": "container",
+      "severity": "error",
+      "rule": "Each entry's actual uncompressed size (counted while reading) is within its limit (LIM-FILE-MAX-MEDIA-BYTES, LIM-FILE-MAX-JSON-BYTES, LIM-SLIDE-MAX-BYTES) and the total does not exceed LIM-FILE-MAX-UNCOMPRESSED-BYTES.",
+      "error_code": "FILE_TOO_LARGE",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-017"
+      ]
+    },
+    {
+      "id": "VAL-C-008",
+      "scope": "container",
+      "severity": "error",
+      "rule": "No entry's compression ratio exceeds LIM-FILE-MAX-COMPRESSION-RATIO.",
+      "error_code": "FILE_INVALID_CONTAINER",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-008"
+      ]
+    },
+    {
+      "id": "VAL-C-009",
+      "scope": "container",
+      "severity": "error",
+      "rule": "manifest.json, theme.json, settings.json and data.db are present.",
+      "error_code": "FILE_INVALID_CONTAINER",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-023"
+      ]
+    },
+    {
+      "id": "VAL-M-001",
+      "scope": "manifest",
+      "severity": "error",
+      "rule": "manifest.json is UTF-8 JSON valid against manifest.schema.json; unknown fields are rejected.",
+      "error_code": "FILE_INVALID_MANIFEST",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-009"
+      ]
+    },
+    {
+      "id": "VAL-M-002",
+      "scope": "manifest",
+      "severity": "error",
+      "rule": "format_version is not newer than the version this application supports. Newer is refused; older is upgraded in the working copy.",
+      "error_code": "FILE_UNSUPPORTED_NEWER",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-005"
+      ]
+    },
+    {
+      "id": "VAL-M-003",
+      "scope": "manifest",
+      "severity": "error",
+      "rule": "Slide IDs are unique.",
+      "error_code": "FILE_INVALID_MANIFEST",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-010"
+      ]
+    },
+    {
+      "id": "VAL-M-004",
+      "scope": "manifest",
+      "severity": "error",
+      "rule": "Media IDs are unique.",
+      "error_code": "FILE_INVALID_MANIFEST",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-010"
+      ]
+    },
+    {
+      "id": "VAL-M-005",
+      "scope": "manifest",
+      "severity": "warning",
+      "rule": "Every entry of requires is a slide type and version this application knows. Otherwise the Activity opens read-only and cannot be saved over.",
+      "error_code": "FILE_OPEN_READ_ONLY_UNKNOWN_TYPE",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-006"
+      ]
+    },
+    {
+      "id": "VAL-M-006",
+      "scope": "manifest",
+      "severity": "error",
+      "rule": "requires equals the set of (type_id, type_version) used by the slide files.",
+      "error_code": "FILE_INVALID_MANIFEST",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-030"
+      ]
+    },
+    {
+      "id": "VAL-X-001",
+      "scope": "cross-file",
+      "severity": "error",
+      "rule": "Every ID in the manifest slide list has exactly one slides/<id>.json.",
+      "error_code": "FILE_INVALID_CONTENT",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-011"
+      ]
+    },
+    {
+      "id": "VAL-X-002",
+      "scope": "cross-file",
+      "severity": "error",
+      "rule": "There is no slides/*.json whose ID is not in the manifest slide list.",
+      "error_code": "FILE_INVALID_CONTENT",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-011"
+      ]
+    },
+    {
+      "id": "VAL-X-003",
+      "scope": "cross-file",
+      "severity": "error",
+      "rule": "Each slide file's id field equals its file name.",
+      "error_code": "FILE_INVALID_CONTENT",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-011"
+      ]
+    },
+    {
+      "id": "VAL-X-004",
+      "scope": "cross-file",
+      "severity": "error",
+      "rule": "roster.json is present if and only if has_roster is true.",
+      "error_code": "FILE_INVALID_MANIFEST",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-018"
+      ]
+    },
+    {
+      "id": "VAL-X-005",
+      "scope": "cross-file",
+      "severity": "error",
+      "rule": "Every media index entry has a file whose size and SHA-256 match, and there is no media file outside the index.",
+      "error_code": "FILE_INVALID_MEDIA",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-012"
+      ]
+    },
+    {
+      "id": "VAL-X-006",
+      "scope": "cross-file",
+      "severity": "error",
+      "rule": "A media file's real content type (magic bytes) matches its declared type and is an allowed image type.",
+      "error_code": "FILE_INVALID_MEDIA",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-020"
+      ]
+    },
+    {
+      "id": "VAL-X-007",
+      "scope": "cross-file",
+      "severity": "error",
+      "rule": "Every media reference inside slide content points to an ID in the media index.",
+      "error_code": "FILE_INVALID_CONTENT",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-031"
+      ]
+    },
+    {
+      "id": "VAL-X-008",
+      "scope": "cross-file",
+      "severity": "error",
+      "rule": "theme.json and settings.json are valid against their schemas.",
+      "error_code": "FILE_INVALID_CONTENT",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-022"
+      ]
+    },
+    {
+      "id": "VAL-X-009",
+      "scope": "cross-file",
+      "severity": "error",
+      "rule": "Each slide file is valid against slide.schema.json and, when its type is known, against the type's content schema.",
+      "error_code": "FILE_INVALID_CONTENT",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-022"
+      ]
+    },
+    {
+      "id": "VAL-D-001",
+      "scope": "database",
+      "severity": "error",
+      "rule": "data.db opens read-only with defensive settings (trusted_schema off, no extensions, no attached databases).",
+      "error_code": "FILE_INVALID_DATABASE",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-013"
+      ]
+    },
+    {
+      "id": "VAL-D-002",
+      "scope": "database",
+      "severity": "error",
+      "rule": "The database application_id equals the expected value.",
+      "error_code": "FILE_INVALID_DATABASE",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-025"
+      ]
+    },
+    {
+      "id": "VAL-D-003",
+      "scope": "database",
+      "severity": "error",
+      "rule": "The database user_version equals manifest data_schema_version; a user_version newer than the application supports is refused as created by a newer version.",
+      "error_code": "FILE_INVALID_MANIFEST",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-019"
+      ]
+    },
+    {
+      "id": "VAL-D-004",
+      "scope": "database",
+      "severity": "error",
+      "rule": "The schema matches the expected tables and indexes exactly (STRICT tables); there are no triggers, views or virtual tables.",
+      "error_code": "FILE_INVALID_DATABASE",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-013"
+      ]
+    },
+    {
+      "id": "VAL-D-005",
+      "scope": "database",
+      "severity": "error",
+      "rule": "PRAGMA integrity_check returns ok and PRAGMA foreign_key_check returns nothing.",
+      "error_code": "FILE_INVALID_DATABASE",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-025"
+      ]
+    },
+    {
+      "id": "VAL-D-006",
+      "scope": "database",
+      "severity": "error",
+      "rule": "The activity_id stored in the database meta table equals manifest meta.activity_id.",
+      "error_code": "FILE_INVALID_MANIFEST",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-019"
+      ]
+    },
+    {
+      "id": "VAL-S-001",
+      "scope": "save",
+      "severity": "error",
+      "rule": "A newly written package is re-opened and passes every rule above before it replaces the target file.",
+      "error_code": "FILE_SAVE_VERIFY_FAILED",
+      "stage": 1,
+      "acceptance": [
+        "AT-FILE-021"
+      ]
+    },
+    {
+      "id": "VAL-P-001",
+      "scope": "protection",
+      "severity": "error",
+      "rule": "A protected archive that cannot be decrypted or authenticated is reported with one message that does not distinguish a wrong password from damage.",
+      "error_code": "FILE_PASSWORD_OR_DAMAGED",
+      "stage": 7,
+      "acceptance": [
+        "AT-PROT-001"
+      ]
+    }
+  ]
+}

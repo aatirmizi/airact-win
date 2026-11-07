@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:actvty:schema:settings",
+  "title": "Activity settings (settings.json)",
+  "description": "Activity-wide settings. Stage 1 holds only the content language; further sections (for example quiz settings) are added by later stages as scheme changes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "content_language"
+  ],
+  "properties": {
+    "content_language": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$",
+      "default": "en",
+      "description": "Language of the content (BCP 47 tag), used for the page language attribute and assistive technology."
+    }
+  }
+}

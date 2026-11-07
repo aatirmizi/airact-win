@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:actvty:schema:limits",
+  "title": "Limits registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "registry_version",
+    "note",
+    "limits"
+  ],
+  "properties": {
+    "registry_version": {
+      "type": "integer"
+    },
+    "note": {
+      "type": "string"
+    },
+    "limits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "value",
+          "unit",
+          "status",
+          "category",
+          "explained_in",
+          "description"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^LIM-[A-Z0-9-]+$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "initial",
+              "measured",
+              "fixed"
+            ]
+          },
+          "category": {
+            "type": "string"
+          },
+          "explained_in": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

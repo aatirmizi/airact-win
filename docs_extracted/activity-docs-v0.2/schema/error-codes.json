@@ -1,0 +1,634 @@
+{
+  "catalogue_version": 1,
+  "naming": "File and application codes are UPPER_SNAKE_CASE and shown to the Facilitator. Protocol codes are lower_snake_case and returned to participant pages. Each code has a message key in the language resource files.",
+  "errors": [
+    {
+      "code": "FILE_NOT_FOUND",
+      "family": "file",
+      "http_status": null,
+      "retry": "user_action",
+      "message_key": "err.FILE_NOT_FOUND",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "The file no longer exists at the remembered or typed path.",
+      "acceptance": [
+        "AT-FILE-026"
+      ]
+    },
+    {
+      "code": "FILE_UNREADABLE",
+      "family": "file",
+      "http_status": null,
+      "retry": "user_action",
+      "message_key": "err.FILE_UNREADABLE",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "The file exists but cannot be read (input/output error).",
+      "acceptance": [
+        "AT-FILE-027"
+      ]
+    },
+    {
+      "code": "FILE_PERMISSION_DENIED",
+      "family": "file",
+      "http_status": null,
+      "retry": "user_action",
+      "message_key": "err.FILE_PERMISSION_DENIED",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "The operating system denies reading the file or writing to its folder.",
+      "acceptance": [
+        "AT-FILE-003",
+        "AT-FILE-028"
+      ]
+    },
+    {
+      "code": "FILE_INVALID_CONTAINER",
+      "family": "file",
+      "http_status": null,
+      "retry": "never",
+      "message_key": "err.FILE_INVALID_CONTAINER",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "The archive structure is invalid or unsafe (see rules VAL-C-001 to VAL-C-009).",
+      "acceptance": [
+        "AT-FILE-007",
+        "AT-FILE-008",
+        "AT-FILE-023",
+        "AT-FILE-024"
+      ]
+    },
+    {
+      "code": "FILE_INVALID_MANIFEST",
+      "family": "file",
+      "http_status": null,
+      "retry": "never",
+      "message_key": "err.FILE_INVALID_MANIFEST",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "manifest.json is invalid or inconsistent (see rules VAL-M-* and VAL-X-004).",
+      "acceptance": [
+        "AT-FILE-009",
+        "AT-FILE-010",
+        "AT-FILE-018",
+        "AT-FILE-019"
+      ]
+    },
+    {
+      "code": "FILE_INVALID_CONTENT",
+      "family": "file",
+      "http_status": null,
+      "retry": "never",
+      "message_key": "err.FILE_INVALID_CONTENT",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "A slide, theme or settings file is invalid, missing or orphaned.",
+      "acceptance": [
+        "AT-FILE-011",
+        "AT-FILE-022"
+      ]
+    },
+    {
+      "code": "FILE_INVALID_MEDIA",
+      "family": "file",
+      "http_status": null,
+      "retry": "never",
+      "message_key": "err.FILE_INVALID_MEDIA",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "A media file does not match its declared size, hash or type.",
+      "acceptance": [
+        "AT-FILE-012",
+        "AT-FILE-020"
+      ]
+    },
+    {
+      "code": "FILE_INVALID_DATABASE",
+      "family": "file",
+      "http_status": null,
+      "retry": "never",
+      "message_key": "err.FILE_INVALID_DATABASE",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "data.db fails defensive validation or an integrity check.",
+      "acceptance": [
+        "AT-FILE-013",
+        "AT-FILE-025"
+      ]
+    },
+    {
+      "code": "FILE_TOO_LARGE",
+      "family": "file",
+      "http_status": null,
+      "retry": "never",
+      "message_key": "err.FILE_TOO_LARGE",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "The file or its contents exceed a size limit.",
+      "acceptance": [
+        "AT-FILE-017"
+      ]
+    },
+    {
+      "code": "FILE_UNSUPPORTED_NEWER",
+      "family": "file",
+      "http_status": null,
+      "retry": "user_action",
+      "message_key": "err.FILE_UNSUPPORTED_NEWER",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "The file was created by a newer version of the application and is refused.",
+      "acceptance": [
+        "AT-FILE-005"
+      ]
+    },
+    {
+      "code": "FILE_OPEN_READ_ONLY_UNKNOWN_TYPE",
+      "family": "file",
+      "http_status": null,
+      "retry": "user_action",
+      "message_key": "err.FILE_OPEN_READ_ONLY_UNKNOWN_TYPE",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "The file contains slide types this version does not know; it opens read-only and cannot be saved over.",
+      "acceptance": [
+        "AT-FILE-006"
+      ]
+    },
+    {
+      "code": "FILE_LOCKED",
+      "family": "file",
+      "http_status": null,
+      "retry": "user_action",
+      "message_key": "err.FILE_LOCKED",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "The file is locked by another application instance (or an unreadable lock exists).",
+      "acceptance": [
+        "AT-LOCK-001",
+        "AT-LOCK-002",
+        "AT-LOCK-003"
+      ]
+    },
+    {
+      "code": "FILE_LOCK_LOST",
+      "family": "file",
+      "http_status": null,
+      "retry": "user_action",
+      "message_key": "err.FILE_LOCK_LOST",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "The lock file is missing or no longer ours at save time; the save is refused.",
+      "acceptance": [
+        "AT-LOCK-007"
+      ]
+    },
+    {
+      "code": "FILE_TARGET_CHANGED",
+      "family": "file",
+      "http_status": null,
+      "retry": "user_action",
+      "message_key": "err.FILE_TARGET_CHANGED",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "The target file was replaced or changed outside the application; the save is refused.",
+      "acceptance": [
+        "AT-LOCK-008"
+      ]
+    },
+    {
+      "code": "FILE_SAVE_DISK_FULL",
+      "family": "file",
+      "http_status": null,
+      "retry": "user_action",
+      "message_key": "err.FILE_SAVE_DISK_FULL",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "There is not enough free space to write the file; nothing was changed.",
+      "acceptance": [
+        "AT-FILE-002"
+      ]
+    },
+    {
+      "code": "FILE_SAVE_FAILED",
+      "family": "file",
+      "http_status": null,
+      "retry": "user_action",
+      "message_key": "err.FILE_SAVE_FAILED",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "Saving failed for another reason; the original is intact.",
+      "acceptance": [
+        "AT-FILE-004"
+      ]
+    },
+    {
+      "code": "FILE_SAVE_VERIFY_FAILED",
+      "family": "file",
+      "http_status": null,
+      "retry": "user_action",
+      "message_key": "err.FILE_SAVE_VERIFY_FAILED",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "The newly written package failed re-validation and was not installed.",
+      "acceptance": [
+        "AT-FILE-021"
+      ]
+    },
+    {
+      "code": "FILE_RECOVERY_AVAILABLE",
+      "family": "file",
+      "http_status": null,
+      "retry": "user_action",
+      "message_key": "err.FILE_RECOVERY_AVAILABLE",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "A leftover working directory was found; Recover or Discard is offered.",
+      "acceptance": [
+        "AT-REC-001",
+        "AT-REC-002"
+      ]
+    },
+    {
+      "code": "FILE_CORRUPTED_RESTORE_AVAILABLE",
+      "family": "file",
+      "http_status": null,
+      "retry": "user_action",
+      "message_key": "err.FILE_CORRUPTED_RESTORE_AVAILABLE",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "The file is damaged and a backup can be restored.",
+      "acceptance": [
+        "AT-FILE-014"
+      ]
+    },
+    {
+      "code": "FILE_PASSWORD_OR_DAMAGED",
+      "family": "file",
+      "http_status": null,
+      "retry": "user_action",
+      "message_key": "err.FILE_PASSWORD_OR_DAMAGED",
+      "facilitator_alert": false,
+      "stage": 7,
+      "description": "A protected file could not be opened: the password may be wrong or the file damaged (one message for both).",
+      "acceptance": [
+        "AT-PROT-001"
+      ]
+    },
+    {
+      "code": "MIGRATION_FAILED",
+      "family": "app",
+      "http_status": null,
+      "retry": "never",
+      "message_key": "err.MIGRATION_FAILED",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "A migration failed and was rolled back; nothing changed.",
+      "acceptance": [
+        "AT-MIGR-001"
+      ]
+    },
+    {
+      "code": "APP_TEST_MODE_NEEDS_DATA_DIR",
+      "family": "app",
+      "http_status": null,
+      "retry": "never",
+      "message_key": "err.APP_TEST_MODE_NEEDS_DATA_DIR",
+      "facilitator_alert": false,
+      "stage": 1,
+      "description": "In test mode the application refuses to start without an explicit data directory.",
+      "acceptance": [
+        "AT-ISO-001"
+      ]
+    },
+    {
+      "code": "SLIDE_INCOMPLETE",
+      "family": "app",
+      "http_status": null,
+      "retry": "user_action",
+      "message_key": "err.SLIDE_INCOMPLETE",
+      "facilitator_alert": false,
+      "stage": 2,
+      "description": "A slide cannot be previewed or presented until its mandatory fields are filled.",
+      "acceptance": [
+        "AT-SLIDE-001"
+      ]
+    },
+    {
+      "code": "NET_BIND_FAILED",
+      "family": "app",
+      "http_status": null,
+      "retry": "user_action",
+      "message_key": "err.NET_BIND_FAILED",
+      "facilitator_alert": true,
+      "stage": 2,
+      "description": "The participant server could not start on the chosen interface; there is no fallback.",
+      "acceptance": [
+        "AT-PRES-003"
+      ]
+    },
+    {
+      "code": "NET_NO_INTERFACE",
+      "family": "app",
+      "http_status": null,
+      "retry": "user_action",
+      "message_key": "err.NET_NO_INTERFACE",
+      "facilitator_alert": true,
+      "stage": 2,
+      "description": "No usable network interface was found.",
+      "acceptance": [
+        "AT-PRES-008"
+      ]
+    },
+    {
+      "code": "NET_INTERFACE_CHANGED",
+      "family": "app",
+      "http_status": null,
+      "retry": "user_action",
+      "message_key": "err.NET_INTERFACE_CHANGED",
+      "facilitator_alert": true,
+      "stage": 3,
+      "description": "The chosen interface changed or disappeared while Live.",
+      "acceptance": [
+        "AT-NET-004"
+      ]
+    },
+    {
+      "code": "SLIDE_LOCKED_BY_RESPONSES",
+      "family": "app",
+      "http_status": null,
+      "retry": "user_action",
+      "message_key": "err.SLIDE_LOCKED_BY_RESPONSES",
+      "facilitator_alert": false,
+      "stage": 3,
+      "description": "Content edits are locked because the slide has stored responses.",
+      "acceptance": [
+        "AT-DATA-001"
+      ]
+    },
+    {
+      "code": "already_answered",
+      "family": "protocol",
+      "http_status": 200,
+      "retry": "never",
+      "message_key": "msg.already_answered",
+      "facilitator_alert": false,
+      "stage": 2,
+      "description": "The participant already has a response and the rule allows only one.",
+      "acceptance": [
+        "AT-RESP-003",
+        "AT-RECON-001"
+      ]
+    },
+    {
+      "code": "closed",
+      "family": "protocol",
+      "http_status": 200,
+      "retry": "never",
+      "message_key": "msg.closed",
+      "facilitator_alert": false,
+      "stage": 2,
+      "description": "The slide has closed (including after any grace period).",
+      "acceptance": [
+        "AT-RESP-005"
+      ]
+    },
+    {
+      "code": "not_accepting",
+      "family": "protocol",
+      "http_status": 200,
+      "retry": "user_action",
+      "message_key": "msg.not_accepting",
+      "facilitator_alert": false,
+      "stage": 2,
+      "description": "The Facilitator switched Accepting responses off.",
+      "acceptance": [
+        "AT-RESP-006"
+      ]
+    },
+    {
+      "code": "not_current",
+      "family": "protocol",
+      "http_status": 200,
+      "retry": "never",
+      "message_key": "msg.not_current",
+      "facilitator_alert": false,
+      "stage": 2,
+      "description": "The submission is for a slide that is not current and not within its grace period.",
+      "acceptance": [
+        "AT-RESP-010"
+      ]
+    },
+    {
+      "code": "not_live",
+      "family": "protocol",
+      "http_status": 200,
+      "retry": "never",
+      "message_key": "msg.not_live",
+      "facilitator_alert": false,
+      "stage": 2,
+      "description": "The Presentation is not Live.",
+      "acceptance": [
+        "AT-RESP-011"
+      ]
+    },
+    {
+      "code": "invalid",
+      "family": "protocol",
+      "http_status": 200,
+      "retry": "never",
+      "message_key": "msg.invalid",
+      "facilitator_alert": false,
+      "stage": 2,
+      "description": "The envelope is well formed but the payload fails the slide's response schema.",
+      "acceptance": [
+        "AT-RESP-008"
+      ]
+    },
+    {
+      "code": "bad_request",
+      "family": "protocol",
+      "http_status": 400,
+      "retry": "never",
+      "message_key": "msg.bad_request",
+      "facilitator_alert": false,
+      "stage": 2,
+      "description": "The request is malformed or contains unknown fields.",
+      "acceptance": [
+        "AT-RESP-012"
+      ]
+    },
+    {
+      "code": "too_large",
+      "family": "protocol",
+      "http_status": 413,
+      "retry": "never",
+      "message_key": "msg.too_large",
+      "facilitator_alert": false,
+      "stage": 2,
+      "description": "The request exceeds the size limit.",
+      "acceptance": [
+        "AT-RESP-007"
+      ]
+    },
+    {
+      "code": "rate_limited",
+      "family": "protocol",
+      "http_status": 429,
+      "retry": "after_delay",
+      "message_key": "msg.rate_limited",
+      "facilitator_alert": false,
+      "stage": 2,
+      "description": "Too many requests from this participant or address.",
+      "acceptance": [
+        "AT-RESP-009",
+        "AT-JOIN-007"
+      ]
+    },
+    {
+      "code": "activity_full",
+      "family": "protocol",
+      "http_status": 200,
+      "retry": "after_delay",
+      "message_key": "msg.activity_full",
+      "facilitator_alert": false,
+      "stage": 2,
+      "description": "The participant limit has been reached.",
+      "acceptance": [
+        "AT-JOIN-004",
+        "AT-JOIN-005"
+      ]
+    },
+    {
+      "code": "storage_error",
+      "family": "protocol",
+      "http_status": 503,
+      "retry": "after_delay",
+      "message_key": "msg.storage_error",
+      "facilitator_alert": true,
+      "stage": 2,
+      "description": "The response could not be stored; nothing was acknowledged.",
+      "acceptance": [
+        "AT-RESP-013"
+      ]
+    },
+    {
+      "code": "id_conflict",
+      "family": "protocol",
+      "http_status": 200,
+      "retry": "never",
+      "message_key": "msg.id_conflict",
+      "facilitator_alert": false,
+      "stage": 2,
+      "description": "The submission ID was already used for a different payload.",
+      "acceptance": [
+        "AT-RESP-004"
+      ]
+    },
+    {
+      "code": "unauthorized",
+      "family": "protocol",
+      "http_status": 401,
+      "retry": "after_reconnect",
+      "message_key": "msg.unauthorized",
+      "facilitator_alert": false,
+      "stage": 2,
+      "description": "The participant token is missing, unknown or expired; the page rejoins.",
+      "acceptance": [
+        "AT-JOIN-008",
+        "AT-RECON-007"
+      ]
+    },
+    {
+      "code": "join_code_invalid",
+      "family": "protocol",
+      "http_status": 200,
+      "retry": "user_action",
+      "message_key": "msg.join_code_invalid",
+      "facilitator_alert": false,
+      "stage": 2,
+      "description": "The join code is wrong or expired.",
+      "acceptance": [
+        "AT-JOIN-002"
+      ]
+    },
+    {
+      "code": "protocol_mismatch",
+      "family": "protocol",
+      "http_status": 400,
+      "retry": "user_action",
+      "message_key": "msg.protocol_mismatch",
+      "facilitator_alert": false,
+      "stage": 2,
+      "description": "The page and the application speak different protocol versions; refresh the page.",
+      "acceptance": [
+        "AT-JOIN-006"
+      ]
+    },
+    {
+      "code": "server_busy",
+      "family": "protocol",
+      "http_status": 503,
+      "retry": "after_delay",
+      "message_key": "msg.server_busy",
+      "facilitator_alert": false,
+      "stage": 2,
+      "description": "The server is shedding load; retry after a short random delay.",
+      "acceptance": [
+        "AT-RECON-003"
+      ]
+    },
+    {
+      "code": "removed",
+      "family": "protocol",
+      "http_status": 403,
+      "retry": "never",
+      "message_key": "msg.removed",
+      "facilitator_alert": false,
+      "stage": 4,
+      "description": "The Facilitator removed this participant.",
+      "acceptance": [
+        "AT-IDEN-004"
+      ]
+    },
+    {
+      "code": "id_in_use",
+      "family": "protocol",
+      "http_status": 200,
+      "retry": "user_action",
+      "message_key": "msg.id_in_use",
+      "facilitator_alert": true,
+      "stage": 5,
+      "description": "A roster ID is already logged in on another device.",
+      "acceptance": [
+        "AT-AUTH-002"
+      ]
+    },
+    {
+      "code": "credentials_invalid",
+      "family": "protocol",
+      "http_status": 200,
+      "retry": "user_action",
+      "message_key": "msg.credentials_invalid",
+      "facilitator_alert": false,
+      "stage": 5,
+      "description": "ID or PIN not recognised (same message for known and unknown IDs).",
+      "acceptance": [
+        "AT-AUTH-001"
+      ]
+    },
+    {
+      "code": "locked_out",
+      "family": "protocol",
+      "http_status": 200,
+      "retry": "after_delay",
+      "message_key": "msg.locked_out",
+      "facilitator_alert": true,
+      "stage": 5,
+      "description": "Too many failed attempts; try again later.",
+      "acceptance": [
+        "AT-AUTH-003"
+      ]
+    }
+  ]
+}

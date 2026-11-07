@@ -1,0 +1,6 @@
+{
+  "name": "AirAct by Skill Upgrade Network",
+  "description": "Real-time audience polling, quizzes, leaderboards, Q&A, and interactive presentations with synchronized presenter, projector, and participant views.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

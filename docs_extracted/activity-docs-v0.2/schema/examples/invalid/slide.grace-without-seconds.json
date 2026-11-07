@@ -1,0 +1,15 @@
+{
+  "id": "s1a2b3c4d5e6",
+  "type_id": "test.placeholder",
+  "type_version": 1,
+  "content": {
+    "title": "Hello"
+  },
+  "settings": {
+    "close_policy": {
+      "mode": "grace"
+    },
+    "timer_seconds": null
+  },
+  "notes": ""
+}

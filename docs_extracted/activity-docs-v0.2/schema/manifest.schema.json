@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:actvty:schema:manifest",
+  "title": "Activity manifest (manifest.json)",
+  "description": "Index of an Activity: identity, versions, slide order, required slide types and media index. Slide content lives in slides/<id>.json. Unknown fields are rejected.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "format_version",
+    "data_schema_version",
+    "meta",
+    "slides",
+    "has_roster",
+    "requires",
+    "media"
+  ],
+  "properties": {
+    "format": {
+      "const": "actvty",
+      "description": "Format identifier."
+    },
+    "format_version": {
+      "const": 1,
+      "description": "Compatibility gate. Changes only when the file scheme changes or a substantial new capability needs it, never merely because the application version changed. Every added field is a scheme change."
+    },
+    "data_schema_version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Number of the latest applied database migration; must equal the data.db user_version."
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "activity_id",
+        "name",
+        "created_at",
+        "modified_at",
+        "app_version_created",
+        "app_version_saved"
+      ],
+      "properties": {
+        "activity_id": {
+          "type": "string",
+          "pattern": "^[a-z2-7]{16}$",
+          "description": "Random Activity ID. Save As, copies and templates assign a new one."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "x-limit": "LIM-ACTIVITY-NAME-MAX-CHARS",
+          "description": "Activity name."
+        },
+        "created_at": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+          "description": "UTC timestamp, seconds."
+        },
+        "modified_at": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+          "description": "UTC timestamp of the last save."
+        },
+        "app_version_created": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z.]+)?$",
+          "description": "Application version that created the Activity."
+        },
+        "app_version_saved": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z.]+)?$",
+          "description": "Application version that last saved it."
+        }
+      }
+    },
+    "slides": {
+      "type": "array",
+      "maxItems": 500,
+      "x-limit": "LIM-ACTIVITY-MAX-SLIDES",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]{12}$",
+        "description": "Random slide identifier (12 lowercase letters or digits)."
+      },
+      "description": "Slide IDs in presentation order. Each has a file slides/<id>.json. Uniqueness is checked by rule VAL-M-003, not by this schema, so that the error is specific."
+    },
+    "has_roster": {
+      "type": "boolean",
+      "description": "True if and only if roster.json is present."
+    },
+    "requires": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "Every (slide type, version) used by the slide files. Lets an older application detect types it does not know.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type_id",
+          "type_version"
+        ],
+        "properties": {
+          "type_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.]{1,39}$"
+          },
+          "type_version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "media": {
+      "type": "array",
+      "maxItems": 1000,
+      "x-limit": "LIM-FILE-MAX-MEDIA-COUNT",
+      "description": "Index of media/<id>.<ext> files.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "ext",
+          "media_type",
+          "bytes",
+          "sha256"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]{16}$"
+          },
+          "ext": {
+            "enum": [
+              "png",
+              "jpg",
+              "webp",
+              "gif"
+            ]
+          },
+          "media_type": {
+            "enum": [
+              "image/png",
+              "image/jpeg",
+              "image/webp",
+              "image/gif"
+            ]
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 52428800,
+            "x-limit": "LIM-FILE-MAX-MEDIA-BYTES"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    }
+  }
+}
