@@ -37,7 +37,7 @@ async function startServer() {
         });
     }
     server.listen(Number(PORT), '0.0.0.0', () => {
-        console.log(`PulseVote server running at http://0.0.0.0:${PORT}`);
+        console.log(`AirAct server running at http://0.0.0.0:${PORT}`);
     });
 }
 startServer().catch((err) => {
